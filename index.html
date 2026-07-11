@@ -74,6 +74,14 @@
     .info-content ul{margin:7px 0 12px;padding-left:22px}
     .info-content li{margin:4px 0}
     @media(max-width:900px){
+      .toolbar{display:flex;flex-direction:column}
+      .toolbar>.control-grid{display:contents}
+      .toolbar .control-grid>.control:nth-child(1){order:1}
+      .toolbar>#monthControl,.toolbar>#speciesControl{order:2}
+      .toolbar .control-grid>.control:nth-child(2){order:3}
+      .toolbar .control-grid>.control:nth-child(3){order:4}
+      .toolbar .control-grid>.filter-clear-hotspot{order:5}
+      .toolbar>.summary-row{order:6}
       .site-card{display:flex;flex-direction:column}
       .site-header{order:0}
       .two-column{display:contents}
