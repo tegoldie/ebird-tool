@@ -114,7 +114,7 @@
     .technical-section.theme-blue>summary{background:#eaf3ff;color:#174d86}.technical-section.theme-orange>summary{background:#fff1cc;color:#8a4b08}
     .month-exclusion{display:flex;align-items:flex-start;gap:8px;margin-top:8px;color:var(--ink);font-size:.86rem}.month-exclusion input{width:auto;margin-top:3px;accent-color:#185fae}
     .legend-title{margin:0 0 8px;font-size:.9rem;color:var(--ink)}
-    .score-intro{font-size:1.05rem}.score-how{margin:18px 0 10px;font-size:1.05rem}.score-contribution-heading{margin:0 0 10px;font-size:1.05rem;font-weight:400}.score-infographic{display:grid;grid-template-columns:minmax(0,1fr) 58px minmax(0,1fr);gap:18px;align-items:center;padding:18px;border:1px solid #d7dde1;border-radius:10px;background:#f6f7f8}.score-factor{height:100%;padding:14px 16px;border:1px solid #e1e5e8;border-radius:9px;background:#fff;box-shadow:0 2px 8px #1720260d}.score-factor h4{margin:0 0 8px;font-size:1.03rem}.score-factor p{margin:0;color:#44535e}.score-times{font-size:3.5rem;font-weight:300;line-height:1;text-align:center;color:#303a40}.score-result{margin-top:14px;padding:14px 16px;border-left:4px solid #4d5960;border-radius:5px;background:#eef1f3;color:var(--ink)}.score-result strong{font-size:1.02rem}
+    .score-intro{font-size:1.05rem}.score-how{margin:18px 0 10px;font-size:1rem;font-style:italic;font-weight:400;color:var(--muted)}.score-concept{margin-top:14px;padding:14px 16px;border-left:4px solid #4d5960;border-radius:5px;background:#eef1f3;color:var(--ink)}.score-contribution-heading{margin:0 0 12px;font-size:1.02rem;font-weight:400}.score-infographic{display:grid;grid-template-columns:minmax(0,1fr) 58px minmax(0,1fr);gap:18px;align-items:center}.score-factor{height:100%;padding:14px 16px;border:1px solid #d7dde1;border-radius:9px;background:#fff;box-shadow:0 2px 8px #1720260d}.score-factor h4{margin:0 0 8px;font-size:1.03rem}.score-factor p{margin:0;color:#44535e}.score-times{font-size:3.5rem;font-weight:300;line-height:1;text-align:center;color:#303a40}.score-result{font-size:1.02rem}.score-concept strong{font-size:1.02rem}
     .collapsed-view{display:inline-flex;flex-direction:column;min-width:82px;margin:0;padding:7px 9px;border:1px solid #8dbcf7;border-radius:8px;background:#eaf3ff;text-align:left}.collapsed-view strong{font-size:.88rem}.collapsed-view span{color:var(--muted);font-size:.66rem;font-weight:700;text-transform:uppercase}
     @media(max-width:620px){.score-infographic{grid-template-columns:1fr}.score-times{font-size:2.4rem}.score-result{align-items:flex-start}.site-collapse-head{gap:8px;padding:14px 12px}.collapsed-view{min-width:72px;padding:6px 7px}.site-collapse-side{display:flex;flex-direction:column;align-items:flex-end}}
   </style>
@@ -145,13 +145,15 @@
           <div class="technical-section-body">
             <p class="score-intro">Each hotspot receives a score showing how often rare birds are seen there. For example, you can expect to see 4 rare birds on a trip to a hotspot with a score of 4.</p>
             <h3 class="score-how">How it works</h3>
-            <p class="score-contribution-heading">A <strong>score contribution</strong> is calculated for each species at each hotspot.</p>
-            <div class="score-infographic" role="img" aria-label="A score contribution is calculated by multiplying rarity weighting by hotspot probability">
-              <div class="score-factor"><h4>Rarity weighting</h4><p>If an observer went to 20 random places in the Sydney region, what is the chance they did not see this species?</p></div>
-              <div class="score-times" aria-hidden="true">×</div>
-              <div class="score-factor"><h4>Hotspot probability</h4><p>How often do observers see this species at this hotspot?</p></div>
+            <div class="score-concept">
+              <p class="score-contribution-heading">A <strong>score contribution</strong> is calculated for each species at each hotspot.</p>
+              <div class="score-infographic" role="img" aria-label="A score contribution is calculated by multiplying rarity weighting by hotspot probability">
+                <div class="score-factor"><h4>Rarity weighting</h4><p>If an observer went to 20 random places in the Sydney region, what is the chance they did not see this species?</p></div>
+                <div class="score-times" aria-hidden="true">×</div>
+                <div class="score-factor"><h4>Hotspot probability</h4><p>How often do observers see this species at this hotspot?</p></div>
+              </div>
             </div>
-            <div class="score-result">A <strong>hotspot score</strong> is calculated by adding up all score contributions for all species at the hotspot.</div>
+            <div class="score-concept score-result">A <strong>hotspot score</strong> is calculated by adding up all score contributions for all species at the hotspot.</div>
           </div>
         </details>
 
