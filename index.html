@@ -194,7 +194,7 @@
             <div class="technical-meta">
               <div><strong>NSW observations</strong><span>1 January 2010 to 30 April 2026</span></div>
               <div><strong>ACT observations</strong><span>1 January 2010 to 30 April 2026</span></div>
-              <div><strong>Report generated</strong><span>14 July 2026, 10:50 PM AEST</span></div>
+              <div><strong>Report generated</strong><span>15 July 2026, 9:39 PM AEST</span></div>
             </div>
             <h3>Source data</h3>
             <p>The tool uses the eBird Basic Dataset for New South Wales and the Australian Capital Territory. Only records associated with an eBird link are included. The analysis also uses only complete checklists—checklists where the observer indicated that all species they could identify were reported.</p>
@@ -274,18 +274,19 @@
             <h3>Filling missing monthly probabilities</h3>
             <p>As outlined above, some months may not have sufficient data to determine a smoothed probability. For species identified as seasonal, the tool finds the nearest month with a smoothed probability before and after the missing month and uses their average. These filled values are used for monthly display and scoring. This does not affect the test for whether a species is seasonal.</p>
             <h3>Monthly scores based on regional patterns</h3>
-            <p>For a hotspot without enough data for observation-based monthly scores, the tool first calculates a twelve-month probability curve for each species using all complete checklists in the hotspot's SA4 region. Regional monthly probabilities are not smoothed because the regional sample is much larger.</p>
+            <p>For a hotspot without enough data for observation-based monthly scores, the tool calculates a twelve-month probability curve for each species using complete checklists in the hotspot's SA4 region. The target hotspot is left out of this calculation, so its observations do not both define the regional pattern and provide the evidence for applying that pattern locally. Regional monthly probabilities are not smoothed because the regional sample is much larger.</p>
             <p>The regional curve is tested for seasonality using the same peak three-month average, average monthly probability and trough three-month average described above. The additional safeguard for a zero trough is not required for regional curves because of the larger sample.</p>
-            <h3>Species-max curve</h3>
-            <p>If the regional curve is seasonal, it is converted to a species-max curve. The highest month is raised to a probability of 100%, and every other month is scaled by the same proportion. This preserves the shape of the regional seasonal pattern while providing a maximum curve that can be adjusted to the hotspot.</p>
+            <p>A regional seasonal curve is used only when, after leaving out the target hotspot, the species occurs on at least 0.2% of regional checklists and is reported on at least 20 regional checklists.</p>
             <h3>Checking the pattern against the hotspot</h3>
             <p>For this check, all regional months with a probability of at least 60% of the regional peak are treated as in-season; they do not need to form a continuous period. The remaining months are treated as off-season.</p>
-            <p>The check can be completed only when the hotspot has checklists in both periods and at least three in-season detections of the species. The in-season detection probability must also be at least as high as the off-season probability. If these requirements are not met, the species keeps its raw All Year probability, is treated as non-seasonal at the hotspot and receives an &ldquo;unclear seasonal patterns&rdquo; orange flag.</p>
+            <p>The check can be completed only when the hotspot has checklists in both periods and at least three in-season detections of the species. The in-season detection probability must be higher than the off-season probability. If these requirements are not met, the species keeps its raw All Year probability, is treated as non-seasonal at the hotspot and receives an &ldquo;unclear seasonal patterns&rdquo; orange flag.</p>
             <h3>Fitting the regional curve to the hotspot</h3>
-            <p>For each month, the tool multiplies the number of hotspot checklists by the species-max probability for that month. Adding these values gives the number of detections expected if the species-max curve applied at full strength.</p>
-            <div class="formula">regional ratio = actual hotspot detections &divide; species-max detections</div>
-            <p>When the ratio is 1 or less, every probability in the species-max curve is multiplied by the ratio. When the ratio is greater than 1, the curve cannot be scaled above a 100% peak. Instead, the lower parts of the curve are raised towards 100%, flattening the curve while preserving its seasonal shape.</p>
+            <p>The regional curve is adjusted to the hotspot using a single fitted value called rho. This changes the level of the probabilities while retaining the regional seasonal pattern.</p>
+            <div class="formula">hotspot monthly probability = 1 &minus; (1 &minus; regional monthly probability)<sup>rho</sup></div>
+            <p>Rho is selected so that the fitted monthly probabilities, applied to the hotspot's actual checklist distribution across the year, reproduce the total number of checklists reporting the species at the hotspot.</p>
+            <p>If no value of rho can reproduce the observations, the regional curve is not applied. The species retains its raw All Year probability and receives an &ldquo;unclear seasonal patterns&rdquo; orange flag.</p>
             <p>The fitted hotspot curve is then tested for seasonality again. If it no longer passes, the species is treated as non-seasonal and retains its raw All Year probability. No orange flag is applied in this case.</p>
+            <p>For accepted curves, the seasonal-period badge is calculated from the fitted hotspot curve.</p>
             <h3>All Year probability for regionally imputed species</h3>
             <p>When a species passes the regional-imputation process, its All Year probability is the equal-month average of its twelve fitted monthly probabilities. This replaces the raw checklist proportion only for that species at that hotspot. Species without an accepted imputed curve, and species at hotspots with observation-based monthly scores, retain their raw All Year probability.</p>
             <h3>Monthly scores</h3>
