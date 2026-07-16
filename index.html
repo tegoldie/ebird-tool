@@ -103,6 +103,8 @@
     .technical-section[open]>summary::after{content:'Hide ↑'}
     .technical-section-body{padding:4px 16px 16px;max-width:940px}
     .technical-section-body h3{margin:18px 0 6px;font-size:1rem}
+    .technical-section-body h4{margin:16px 0 6px;font-size:.95rem}
+    .technical-section-body h5{margin:14px 0 5px;font-size:.9rem}
     .technical-section-body p{margin:7px 0}
     .technical-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0 16px}
     .technical-meta>div{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fbfcfd}
@@ -196,38 +198,40 @@
               <div><strong>Report generated</strong><span>15 July 2026, 9:39 PM AEST</span></div>
             </div>
             <h3>Source data</h3>
-            <p>The tool uses the eBird Basic Dataset for New South Wales and the Australian Capital Territory. Only records associated with an eBird link are included. The analysis also uses only complete checklists—checklists where the observer indicated that all species they could identify were reported.</p>
-            <p>Checklist data can be distorted by user behaviour. For example, results may differ where the data are dominated by formal surveys, or where observers record birds heard as well as birds seen. Checklist coverage also varies between hotspots, months and years.</p>
-            <p>Records for introduced species are excluded.</p>
-            <h3>Data cleaning</h3>
-            <p>Records without an observation date, checklist identifier, hotspot identifier or species name are excluded.</p>
-            <p>Apparent duplicate checklists are removed. Checklists are treated as duplicates when they have matching hotspot, date, start time, protocol, duration, distance and area covered. One checklist is retained from each matching set.</p>
-            <h3>Hotspot exclusions</h3>
+            <p>The tool uses the eBird Basic Dataset for New South Wales and the Australian Capital Territory. eBird is a citizen science platform through which birders and other observers report their bird observations. Users submit a checklist of the birds they identified at a particular time and place. eBird identifies popular birding locations as hotspots, which is where most checklists are submitted.</p>
+            <p>Checklist data can be distorted by user behaviour. For example, results may differ where the dataset is dominated by formal surveys, or where observers record birds heard as well as birds seen. Checklist coverage also varies between hotspots, months and years. The results should therefore be treated as a useful guide rather than a precise prediction. The tool includes safeguards for some known data issues, but these cannot remove every source of distortion.</p>
+            <h3>Excluded data</h3>
+            <p>This tool uses only complete checklists&mdash;checklists where the observer indicated that all species they could identify were reported.</p>
+            <p>Introduced species are excluded.</p>
+            <p>Only checklists submitted at hotspots are included.</p>
+            <p>Duplicate checklists are removed. Checklists are treated as duplicates when they have matching hotspot, date, start time, protocol, duration, distance and area covered. One checklist is retained from each matching set.</p>
             <p>Hotspots are excluded if:</p>
-            <ul><li>They have fewer than 10 complete checklists.</li><li>They have no complete checklists within the last three years.</li><li>All complete checklists within the last three years were submitted by the same observer.</li></ul>
+            <ul><li>They have fewer than 10 checklists.</li><li>They have no checklists within the last three years.</li><li>All checklists within the last three years were submitted by the same observer.</li></ul>
           </div>
         </details>
 
         <details class="technical-section">
           <summary>Scoring</summary>
           <div class="technical-section-body">
-            <p>The hotspot score estimates how many species a birder might see at a hotspot that they would not have encountered on 20 randomly selected complete checklists from across Greater Sydney and surrounds.</p>
+            <p>The hotspot score estimates how many species an observer would expect to see at the hotspot that would not appear on any of 20 randomly selected checklists from across Greater Sydney and surrounds.</p>
             <h3>Regional probability</h3>
-            <p>Each species is assigned a regional probability:</p>
-            <div class="formula">regional probability = regional complete checklists reporting the species ÷ all regional complete checklists</div>
-            <p>The full Greater Sydney and surrounds region is used for this calculation, regardless of the region currently selected in the report.</p>
+            <p>Each species is assigned a regional probability using all checklists across Greater Sydney and surrounds.</p>
+            <div class="formula">regional probability = checklists across Greater Sydney and surrounds reporting the species &divide; all checklists across Greater Sydney and surrounds</div>
             <h3>Rarity weighting</h3>
-            <div class="formula">rarity weighting = (1 − regional probability)<sup>20</sup></div>
-            <p>This represents the probability that the species would not appear on any of 20 randomly selected complete checklists from across Greater Sydney and surrounds.</p>
+            <div class="formula">rarity weighting = (1 &minus; regional probability)<sup>20</sup></div>
+            <p>This represents the probability that the species does not appear on any of 20 randomly selected checklists from the dataset. Hotspots with more submitted checklists have more influence on regional probability than hotspots with fewer checklists. A species that is widespread mainly in less visited areas may therefore receive a higher rarity weighting.</p>
+            <p>Each species has one rarity weighting. This variable does not change between hotspots.</p>
             <h3>Hotspot probability</h3>
-            <div class="formula">hotspot probability = complete checklists at the hotspot reporting the species ÷ all complete checklists at the hotspot</div>
-            <p>This is a checklist-based probability. It does not account for differences in checklist duration, distance, time of day, observer experience or number of observers.</p>
+            <p>Hotspot probability is calculated for each species at each hotspot.</p>
+            <div class="formula">hotspot probability = checklists at the hotspot reporting the species &divide; all checklists at the hotspot</div>
+            <p>This does not account for differences in checklist duration, distance, time of day, observer behaviour or number of observers.</p>
             <h3>Species score contribution</h3>
-            <div class="formula">species score contribution = hotspot probability × rarity weighting</div>
-            <p>A species makes a large contribution when it is both uncommon across Greater Sydney and surrounds and regularly reported at the particular hotspot.</p>
+            <p>A species score contribution is calculated for each species at each hotspot.</p>
+            <div class="formula">species score contribution = hotspot probability &times; rarity weighting</div>
+            <p>A species has a large score contribution when it is both uncommon generally and frequently reported at the particular hotspot.</p>
             <h3>Hotspot score</h3>
             <div class="formula">hotspot score = sum of all species score contributions</div>
-            <p>Species with a score contribution of at least 0.10 are displayed as the main species. Species with a contribution of at least 0.05 but less than 0.10 are displayed under More species. These display thresholds do not determine the hotspot score: all species contributions are included in the total.</p>
+            <p>The hotspot score is used by the tool to rank hotspots. Species with a score contribution of at least 0.10 are displayed in the main species list. Species with a contribution of at least 0.05 but less than 0.10 are displayed under More species.</p>
           </div>
         </details>
 
@@ -236,77 +240,97 @@
           <div class="technical-section-body">
             <p>Hotspots are assigned to regions using 2021 Australian Bureau of Statistics SA4 boundaries.</p>
             <h3>Greater Sydney and Illawarra</h3>
-            <p>This region includes all SA4 regions with “Sydney” in their name, Central Coast and Illawarra. This includes the Blue Mountains through the relevant Greater Sydney SA4.</p>
+            <p>This region includes all SA4 regions with &ldquo;Sydney&rdquo; in their name, Central Coast and Illawarra. The Blue Mountains are included through the Sydney - Outer West and Blue Mountains SA4. This region is intended to capture areas within driving distance of Sydney.</p>
             <h3>Greater Sydney and surrounds</h3>
-            <p>This region includes all the data in the Tool, including Greater Sydney and Illawarra, Hunter Valley, Capital Region, Central West, Southern Highlands and Shoalhaven, Newcastle and Lake Macquarie, and the Australian Capital Territory.</p>
+            <p>This region includes all the data used by the tool. In addition to Greater Sydney, the Central Coast and Illawarra, it includes the Hunter Valley, Capital Region, Central West, Southern Highlands and Shoalhaven, Newcastle and Lake Macquarie, and the Australian Capital Territory.</p>
             <p>Jervis Bay Territory is treated as part of Southern Highlands and Shoalhaven.</p>
             <h3>Geographic limits</h3>
-            <p>Hotspots west of 148.7° E or south of 36.0° S are excluded. This excludes hotspots that are west of Orange and south of Moruya, while including the Capertee Valley.</p>
+            <p>Hotspots west of 148.7&deg; E or south of 36.0&deg; S are excluded. This excludes hotspots that are west of Cowra and south of Moruya, while including the Capertee Valley.</p>
           </div>
         </details>
 
         <details class="technical-section theme-blue">
           <summary>Months and seasons</summary>
           <div class="technical-section-body">
-            <h3>Two ways of calculating monthly scores</h3>
-            <p>The tool calculates monthly scores directly from a hotspot's observations when the hotspot has enough data spread across the year. For hotspots with less data, it uses seasonal patterns from the hotspot's SA4 region to estimate monthly probabilities. The regional method is described below.</p>
-            <h3>Monthly scores based on hotspot observations</h3>
-            <p>A hotspot has enough data for observation-based monthly scores when it has at least eight complete checklists in a month, with that level of coverage in at least nine of the twelve months. A month with fewer than eight checklists is treated as missing, not as having a probability of zero.</p>
-            <p>For hotspots that are eligible for monthly scores, the tool looks at each species’ monthly probabilities.</p>
-            <h3>Raw monthly probabilities</h3>
-            <p>Raw monthly probability is calculated as:</p>
-            <div class="formula">monthly probability = monthly checklists reporting the species &divide; all complete checklists at the hotspot in that month</div>
-            <p>Months here include all years, so for example February would include February 2020, February 2021 and so on.</p>
-            <h3>Smoothed monthly probabilities</h3>
-            <p>Raw monthly probabilities are then smoothed. For each month, the tool averages the raw monthly probability for that month with the raw monthly probabilities for the preceding and following months. This means months are weighted equally, even if there are different numbers of checklists in different months. At least two of the three monthly probabilities must be available. The calendar is circular, so December and January are treated as adjacent.</p>
-            <p>This smoothing reduces, but does not eliminate, the possibility of seasonal patterns being the result of random noise in the data.</p>
-            <p>A seasonal pattern is considered only when at least nine months have a defined smoothed probability.</p>
-            <h3>Identifying the peak and trough</h3>
-            <p>The tool identifies the month with the highest smoothed probability and averages the available smoothed probabilities for that month and the preceding and following months to calculate the peak three-month average. At least two of the three values must be available. It applies the same process to the month with the lowest smoothed probability to calculate the trough three-month average.</p>
-            <h3>Final test for seasonality</h3>
-            <p>A species is identified as seasonal if the peak is at least 1.5 times the species’ average monthly probability after smoothing, and at least 2 times the trough. When the trough is zero, the surrounding three-month trough period must contain at least 15 complete checklists to ensure the absence is not caused by a lack of observer effort.</p>
-            <p>If a species is not identified as seasonal through this test, the tool will treat it as though its probability is the same for all months.</p>
-            <h3>Seasonal period</h3>
-            <p>Each species identified as seasonal is given a badge with a seasonal period, for example “seasonal: Nov-Feb”.</p>
-            <p>Months with a smoothed probability of at least 60% of the highest smoothed monthly probability are potential in-season months. Starting from the peak, the tool identifies a continuous block of qualifying months.</p>
-            <p>If a month has insufficient data to determine its smoothed probability, the tool can still include that month in the seasonal period if a month meeting the test occurs immediately beyond it.</p>
-            <h3>Filling missing monthly probabilities</h3>
-            <p>As outlined above, some months may not have sufficient data to determine a smoothed probability. For species identified as seasonal, the tool finds the nearest month with a smoothed probability before and after the missing month and uses their average. These filled values are used for monthly display and scoring. This does not affect the test for whether a species is seasonal.</p>
-            <h3>Monthly scores based on regional patterns</h3>
-            <p>For a hotspot without enough data for observation-based monthly scores, the tool calculates a twelve-month probability curve for each species using complete checklists in the hotspot's SA4 region. The target hotspot is left out of this calculation, so its observations do not both define the regional pattern and provide the evidence for applying that pattern locally. Regional monthly probabilities are not smoothed because the regional sample is much larger.</p>
-            <p>The regional curve is tested for seasonality using the same peak three-month average, average monthly probability and trough three-month average described above. The additional safeguard for a zero trough is not required for regional curves because of the larger sample.</p>
-            <p>A regional seasonal curve is used only when, after leaving out the target hotspot, the species occurs on at least 0.2% of regional checklists and is reported on at least 20 regional checklists.</p>
-            <h3>Checking the pattern against the hotspot</h3>
-            <p>For this check, all regional months with a probability of at least 60% of the regional peak are treated as in-season; they do not need to form a continuous period. The remaining months are treated as off-season.</p>
-            <p>The check can be completed only when the hotspot has checklists in both periods and at least three in-season detections of the species. The in-season detection probability must be higher than the off-season probability. If these requirements are not met, the species keeps its raw All Year probability, is treated as non-seasonal at the hotspot and receives an &ldquo;unclear seasonal patterns&rdquo; orange flag.</p>
-            <h3>Fitting the regional curve to the hotspot</h3>
-            <p>The regional curve is adjusted to the hotspot using a single fitted value called rho. This changes the level of the probabilities while retaining the regional seasonal pattern.</p>
-            <div class="formula">hotspot monthly probability = 1 &minus; (1 &minus; regional monthly probability)<sup>rho</sup></div>
-            <p>Rho is selected so that the fitted monthly probabilities, applied to the hotspot's actual checklist distribution across the year, reproduce the total number of checklists reporting the species at the hotspot.</p>
-            <p>If no value of rho can reproduce the observations, the regional curve is not applied. The species retains its raw All Year probability and receives an &ldquo;unclear seasonal patterns&rdquo; orange flag.</p>
-            <p>The fitted hotspot curve is then tested for seasonality again. If it no longer passes, the species is treated as non-seasonal and retains its raw All Year probability. No orange flag is applied in this case.</p>
-            <p>For accepted curves, the seasonal-period badge is calculated from the fitted hotspot curve.</p>
-            <h3>All Year probability for regionally imputed species</h3>
-            <p>When a species passes the regional-imputation process, its All Year probability is the equal-month average of its twelve fitted monthly probabilities. This replaces the raw checklist proportion only for that species at that hotspot. Species without an accepted imputed curve, and species at hotspots with observation-based monthly scores, retain their raw All Year probability.</p>
             <h3>Monthly scores</h3>
-            <p>A score is calculated for each month using either the observation-based or regional-imputed probabilities described above.</p>
-            <div class="formula">seasonal species monthly contribution = monthly probability &times; rarity weighting</div>
-            <div class="formula">non-seasonal species monthly contribution = hotspot probability &times; rarity weighting</div>
-            <p>Only species with an identified seasonal pattern therefore cause a hotspot’s score to rise or fall across the year.</p>
+            <p>Each hotspot is scored on a monthly basis. This gives it a total of 13 scores: one All Year score, as explained in the scoring section above, and one score for each calendar month.</p>
+            <p>Months here include all years, so for example February would include February 2020, February 2021 and so on.</p>
+            <p>Species are identified by the tool as either seasonal or non-seasonal. Seasonal patterns vary by place so this is determined for each species at each hotspot. If the species is seasonal, it is given a probability for each month, as well as an aggregate All Year probability. If the species is non-seasonal, it only has an All Year probability which is applied to all months.</p>
+            <p>Monthly score contributions are calculated as follows:</p>
+            <div class="formula">seasonal species monthly score contribution = monthly probability &times; rarity weighting</div>
+            <div class="formula">non-seasonal species monthly score contribution = hotspot probability &times; rarity weighting</div>
+            <p>These monthly score contributions are used to calculate a monthly score for the hotspot:</p>
             <div class="formula">monthly hotspot score = sum of all species contributions for that month</div>
-            <p>The difference between a monthly score and the All Year score reflects the combined changes of the species identified as seasonal for that hotspot.</p>
+            <p>This is a modification of the scoring formula set out in the scoring section above.</p>
+            <p>This calculation means only seasonal species cause a hotspot&rsquo;s score to rise or fall across the year.</p>
+            <h3>Two ways of determining seasonality and monthly probabilities</h3>
+            <p>Hotspots with a good spread of checklists across the year have monthly scores calculated from those checklists. Hotspots that are not as well sampled use SA4-level data to estimate the likely seasonal patterns of species that occur there.</p>
+            <p>A hotspot has enough data for checklist-based seasonality when it has at least eight checklists in a month, with that level of coverage in at least nine of the twelve months. Otherwise, it uses SA4-assisted seasonality.</p>
+            <h3>Checklist-based seasonality</h3>
+            <p>This method is used for well-sampled hotspots that have at least eight checklists in a month for at least nine of the twelve months.</p>
+            <h4>Is this species seasonal at this hotspot?</h4>
+            <p>The tool conducts a test to determine which species are seasonal at the hotspot.</p>
+            <h5>Raw monthly probabilities</h5>
+            <p>Raw monthly probability is calculated as:</p>
+            <div class="formula">raw monthly probability = checklists reporting the species in that month &divide; all checklists at the hotspot in that month</div>
+            <p>A raw monthly probability is only calculated if there are at least eight checklists in that month.</p>
+            <h5>Smoothed monthly probabilities</h5>
+            <p>Raw monthly probabilities are then smoothed. For each month, the tool averages the raw monthly probability for that month with the raw monthly probabilities for the preceding and following months. This means months are weighted equally, even if there are different numbers of checklists in different months. A smoothed monthly probability is only calculated if at least two of the three raw monthly probabilities are available.</p>
+            <p>This smoothing reduces, but does not eliminate, the possibility of seasonal patterns being the result of random noise in the data.</p>
+            <h5>Identifying the peak and trough</h5>
+            <p>The tool identifies the month with the highest smoothed probability and averages the available smoothed probabilities for that month and the preceding and following months to calculate the peak three-month average. At least two of these three values must be available. It applies the same process to the month with the lowest smoothed probability to calculate the trough three-month average, again requiring at least two available values.</p>
+            <h5>Final test for seasonality</h5>
+            <p>A species is identified as seasonal if the peak is at least 1.5 times the average of the species&rsquo; defined smoothed monthly probabilities and at least 2 times the trough. When the trough is zero, the three-month trough period must contain at least 15 checklists to ensure the absence is not caused by a lack of observer effort.</p>
+            <p>If a species is not identified as seasonal through this test, it will be treated as non-seasonal.</p>
+            <h4>Filling missing monthly probabilities</h4>
+            <p>A month has a defined smoothed probability only where a raw probability is available for at least two of the three relevant months: the month itself, the preceding month and the following month. A raw probability is calculated only for months with at least eight checklists.</p>
+            <p>For species identified as seasonal, the tool fills in missing smoothed probabilities by finding the nearest months with a smoothed probability before and after the missing month and using their average.</p>
+            <p>Smoothed monthly probabilities are used as the monthly probabilities for species identified as seasonal in this way. They are displayed by the tool and used to calculate monthly score contributions.</p>
+            <h3>SA4-assisted seasonality</h3>
+            <p>If a hotspot does not have enough data to determine seasonal patterns&mdash;at least eight checklists in at least nine months&mdash;the tool uses SA4-level data to estimate the seasonal patterns of species at the hotspot.</p>
+            <h4>Is the species seasonal across the SA4?</h4>
+            <p>The tool calculates the probability of recording each species in each month using checklists across the hotspot&rsquo;s SA4 region.</p>
+            <div class="formula">SA4 monthly probability = SA4 checklists reporting the species in that month &divide; all SA4 checklists in that month</div>
+            <p>The hotspot being analysed is left out of both parts of this calculation.</p>
+            <p>The tool then determines whether the species has a seasonal pattern across the SA4 by calculating a peak and a trough. The peak is the average of the highest-probability month and the preceding and following months. The trough is calculated in the same way around the lowest-probability month.</p>
+            <p>The species is identified as seasonal if the peak is at least 1.5 times the average of its twelve SA4 monthly probabilities and at least 2 times the trough. This applies the same principle as checklist-based seasonality, but with fewer data safeguards as the SA4 sample size used is much larger.</p>
+            <p>If the species does not pass this test, it is regarded as non-seasonal.</p>
+            <p>A regional seasonal pattern is used only if, after excluding the hotspot being analysed, the species is reported on at least 0.2% of SA4 checklists and on at least 20 SA4 checklists. A species that fails this test is given an &ldquo;unclear seasonal patterns&rdquo; orange flag.</p>
+            <h4>Is the species seasonal at the hotspot?</h4>
+            <p>The next step is for the tool to check whether the hotspot data are consistent with the SA4-level pattern.</p>
+            <p>Any month where the species&rsquo; SA4 monthly probability is at least 60% of its peak SA4 monthly probability is defined as in-season. The remaining months are treated as off-season.</p>
+            <p>The tool calculates the proportion of in-season checklists reporting the species and the proportion of off-season checklists reporting it. The in-season proportion must be higher.</p>
+            <p>The check can be completed only when the hotspot has checklists in both periods and at least three in-season checklists reporting the species.</p>
+            <p>If these requirements are not met, or if the in-season proportion is not higher, the species is treated as non-seasonal at the hotspot and receives an &ldquo;unclear seasonal patterns&rdquo; orange flag.</p>
+            <h4>Calculating monthly probabilities</h4>
+            <p>If the species is determined to be seasonal across the SA4 and the hotspot data pass the in-season and off-season check, the tool then generates monthly probabilities.</p>
+            <p>The SA4 monthly probabilities are adjusted using a single hotspot-level variable called rho, which represents how good the site is for the species. Rho is determined by the solution to the following equation:</p>
+            <div class="formula">&Sigma;<sub>m</sub> n<sub>m</sub> &times; [1 &minus; (1 &minus; p<sub>m</sub>)<sup>rho</sup>] = D</div>
+            <p>Here, n<sub>m</sub> is the number of checklists at the hotspot in month m, p<sub>m</sub> is the SA4 monthly probability after excluding the hotspot, and D is the total number of checklists at the hotspot reporting the species.</p>
+            <p>Rho is selected so that the fitted monthly probabilities, applied to the hotspot&rsquo;s actual distribution of checklists across the year, reproduce D.</p>
+            <p>This calculation accounts for how often the species is reported at the hotspot and which months observers visited.</p>
+            <p>Once rho is calculated, the hotspot probability for each month is calculated as:</p>
+            <div class="formula">hotspot monthly probability = 1 &minus; (1 &minus; SA4 monthly probability)<sup>rho</sup></div>
+            <p>Once the new monthly probabilities are calculated, the tool checks whether the fitted hotspot curve still meets the seasonality test. The three-month peak must be at least 1.5 times the average of the twelve fitted monthly probabilities and at least 2 times the three-month trough. If the fitted curve does not pass, the species is treated as non-seasonal at the hotspot. No orange flag is applied in this case.</p>
+            <h4>Changing the All Year probability</h4>
+            <p>If a species is determined to be seasonal using SA4-assisted monthly probabilities, the tool recalculates the species&rsquo; All Year probability as the equal-month average of its twelve fitted monthly probabilities. This replaces the raw checklist proportion only for that species at that hotspot. It allows the tool to adjust for cases where, for example, a species appears rare because most observers visited in the wrong season.</p>
+            <h3>Seasonal period badges</h3>
+            <p>Each species identified as seasonal is given a badge with a seasonal period, for example &ldquo;seasonal: Nov-Feb&rdquo;.</p>
+            <p>The seasonal period is the continuous block of months around the peak where the relevant monthly probability is at least 60% of the peak monthly probability, regardless of which of the two methods is used to calculate this.</p>
+            <p>For checklist-based badges, the tool can include a month with insufficient data in the seasonal period if a month meeting the test occurs immediately beyond it.</p>
           </div>
         </details>
 
         <details class="technical-section theme-orange">
           <summary>Orange flags</summary>
-                      <div class="technical-section-body">
+          <div class="technical-section-body">
+            <p>Orange flags are labels applied at the hotspot or species level to indicate that the tool has identified a potential concern with the data and that the result should be interpreted cautiously.</p>
             <h3>Hotspot orange flags</h3>
-            <p>Hotspots are included and given an orange flag if:</p>
-            <ul><li>They have 10&ndash;29 complete checklists.</li><li>Their monthly scores use SA4-level seasonal patterns because the hotspot does not have enough checklists spread across the year. This is shown as &ldquo;low confidence monthly scores&rdquo;.</li></ul>
+            <p>Hotspots are given an orange flag if:</p>
+            <ul><li>They have 10&ndash;29 checklists.</li><li>Their monthly scores use SA4-assisted seasonality because the hotspot does not have enough checklists spread across the year. This is shown as &ldquo;low confidence monthly scores&rdquo;.</li></ul>
             <h3>Species orange flags</h3>
             <p>A species is given an orange flag for a particular hotspot if:</p>
-            <ul><li>It has not been reported at the hotspot within the last three years.</li><li>It has been reported at the hotspot by only one observer within the last three years.</li><li>All its records at the hotspot fall within a maximum period of 92 days, suggesting that it may have been a one-off occurrence.</li><li>The regional seasonal pattern cannot be applied clearly to the hotspot. This is shown as &ldquo;unclear seasonal patterns&rdquo;.</li></ul>
+            <ul><li>It has not been reported at the hotspot within the last three years.</li><li>It has been reported at the hotspot by only one observer within the last three years.</li><li>All its records at the hotspot fall within a maximum period of 92 days, suggesting that it may have been a one-off occurrence.</li><li>SA4-assisted seasonality cannot be applied confidently to the species. This is shown as &ldquo;unclear seasonal patterns&rdquo; and the species is treated as non-seasonal. This applies when SA4 and hotspot-level data do not align, or where the hotspot lacks data to apply the SA4-assisted method. This is explained in more detail under Months and seasons.</li></ul>
           </div>
         </details>
 
