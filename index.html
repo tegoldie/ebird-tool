@@ -106,9 +106,10 @@
     .technical-section-body h4{margin:16px 0 6px;font-size:.95rem}
     .technical-section-body h5{margin:14px 0 5px;font-size:.9rem}
     .technical-section-body p{margin:7px 0}
-    #technicalInfoPanel .technical-section-body>h3{font-style:italic;font-weight:400}
+    #technicalInfoPanel .technical-section-body>h3{font-style:normal;font-weight:700}
+    #technicalInfoPanel .technical-section-body h4{font-style:italic;font-weight:400}
     .technical-nested-box{margin:10px 0 14px 18px;padding:2px 14px 10px;border-left:3px solid #d8e0e6;border-radius:0 7px 7px 0;background:#f7f9fa}
-    .technical-nested-box>h4{margin-top:10px}
+    .technical-nested-box>h5{margin-top:10px}
     .technical-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0 16px}
     .technical-meta>div{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fbfcfd}
     .technical-meta strong,.technical-meta span{display:block}
@@ -271,31 +272,34 @@
             <p>A hotspot has enough data for checklist-based seasonality when it has at least eight checklists in a month, with that level of coverage in at least nine of the twelve months. Otherwise, it uses SA4-assisted seasonality.</p>
             <h3>Checklist-based seasonality</h3>
             <p>This method is used for well-sampled hotspots that have at least eight checklists in a month for at least nine of the twelve months.</p>
-            <div class="technical-nested-box">
             <h4>Is this species seasonal at this hotspot?</h4>
             <p>The tool conducts a test to determine which species are seasonal at the hotspot.</p>
+            <div class="technical-nested-box">
             <h5>Raw monthly probabilities</h5>
             <p>Raw monthly probability is calculated as:</p>
             <div class="formula">raw monthly probability = checklists reporting the species in that month &divide; all checklists at the hotspot in that month</div>
             <p>A raw monthly probability is only calculated if there are at least eight checklists in that month.</p>
+            </div>
+            <div class="technical-nested-box">
             <h5>Smoothed monthly probabilities</h5>
             <p>Raw monthly probabilities are then smoothed. For each month, the tool averages the raw monthly probability for that month with the raw monthly probabilities for the preceding and following months. This means months are weighted equally, even if there are different numbers of checklists in different months. A smoothed monthly probability is only calculated if at least two of the three raw monthly probabilities are available.</p>
             <p>This smoothing reduces, but does not eliminate, the possibility of seasonal patterns being the result of random noise in the data.</p>
+            </div>
+            <div class="technical-nested-box">
             <h5>Identifying the peak and trough</h5>
             <p>The tool identifies the month with the highest smoothed probability and averages the available smoothed probabilities for that month and the preceding and following months to calculate the peak three-month average. At least two of these three values must be available. It applies the same process to the month with the lowest smoothed probability to calculate the trough three-month average, again requiring at least two available values.</p>
+            </div>
+            <div class="technical-nested-box">
             <h5>Final test for seasonality</h5>
             <p>A species is identified as seasonal if the peak is at least 1.5 times the average of the species&rsquo; defined smoothed monthly probabilities and at least 2 times the trough. When the trough is zero, the three-month trough period must contain at least 15 checklists to ensure the absence is not caused by a lack of observer effort.</p>
             <p>If a species is not identified as seasonal through this test, it will be treated as non-seasonal.</p>
             </div>
-            <div class="technical-nested-box">
             <h4>Filling missing monthly probabilities</h4>
             <p>A month has a defined smoothed probability only where a raw probability is available for at least two of the three relevant months: the month itself, the preceding month and the following month. A raw probability is calculated only for months with at least eight checklists.</p>
             <p>For species identified as seasonal, the tool fills in missing smoothed probabilities by finding the nearest months with a smoothed probability before and after the missing month and using their average.</p>
             <p>Smoothed monthly probabilities are used as the monthly probabilities for species identified as seasonal in this way. They are displayed by the tool and used to calculate monthly score contributions.</p>
-            </div>
             <h3>SA4-assisted seasonality</h3>
             <p>If a hotspot does not have enough data to determine seasonal patterns&mdash;at least eight checklists in at least nine months&mdash;the tool uses SA4-level data to estimate the seasonal patterns of species at the hotspot.</p>
-            <div class="technical-nested-box">
             <h4>Is the species seasonal across the SA4?</h4>
             <p>The tool calculates the probability of recording each species in each month using checklists across the hotspot&rsquo;s SA4 region.</p>
             <div class="formula">SA4 monthly probability = SA4 checklists reporting the species in that month &divide; all SA4 checklists in that month</div>
@@ -304,16 +308,12 @@
             <p>The species is identified as seasonal if the peak is at least 1.5 times the average of its twelve SA4 monthly probabilities and at least 2 times the trough. This applies the same principle as checklist-based seasonality, but with fewer data safeguards as the SA4 sample size used is much larger.</p>
             <p>If the species does not pass this test, it is regarded as non-seasonal.</p>
             <p>A regional seasonal pattern is used only if, after excluding the hotspot being analysed, the species is reported on at least 0.2% of SA4 checklists and on at least 20 SA4 checklists. A species that fails this test is given an &ldquo;unclear seasonal patterns&rdquo; orange flag.</p>
-            </div>
-            <div class="technical-nested-box">
             <h4>Is the species seasonal at the hotspot?</h4>
             <p>The next step is for the tool to check whether the hotspot data are consistent with the SA4-level pattern.</p>
             <p>Any month where the species&rsquo; SA4 monthly probability is at least 60% of its peak SA4 monthly probability is defined as in-season. The remaining months are treated as off-season.</p>
             <p>The tool calculates the proportion of in-season checklists reporting the species and the proportion of off-season checklists reporting it. The in-season proportion must be higher.</p>
             <p>The check can be completed only when the hotspot has checklists in both periods and at least three in-season checklists reporting the species.</p>
             <p>If these requirements are not met, or if the in-season proportion is not higher, the species is treated as non-seasonal at the hotspot and receives an &ldquo;unclear seasonal patterns&rdquo; orange flag.</p>
-            </div>
-            <div class="technical-nested-box">
             <h4>Calculating monthly probabilities</h4>
             <p>If the species is determined to be seasonal across the SA4 and the hotspot data pass the in-season and off-season check, the tool then generates monthly probabilities.</p>
             <p>The SA4 monthly probabilities are adjusted using a single hotspot-level variable called rho, which represents how good the site is for the species. Rho is determined by the solution to the following equation:</p>
@@ -324,7 +324,6 @@
             <p>Once rho is calculated, the hotspot probability for each month is calculated as:</p>
             <div class="formula">hotspot monthly probability = 1 &minus; (1 &minus; SA4 monthly probability)<sup>rho</sup></div>
             <p>Once the new monthly probabilities are calculated, the tool checks whether the fitted hotspot curve still meets the seasonality test. The three-month peak must be at least 1.5 times the average of the twelve fitted monthly probabilities and at least 2 times the three-month trough. If the fitted curve does not pass, the species is treated as non-seasonal at the hotspot. No orange flag is applied in this case.</p>
-            </div>
             <h3>Seasonal period badges</h3>
             <p>Each species identified as seasonal is given a badge with a seasonal period, for example &ldquo;seasonal: Nov-Feb&rdquo;.</p>
             <p>The seasonal period is the continuous block of months around the peak where the relevant monthly probability is at least 60% of the peak monthly probability, regardless of which of the two methods is used to calculate this.</p>
