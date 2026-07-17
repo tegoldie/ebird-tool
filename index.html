@@ -141,16 +141,17 @@
         <details class="technical-section">
           <summary>About the tool</summary>
           <div class="technical-section-body">
-            <p>This tool is designed for Sydney-based birders to choose where and when to go to see rare species. The tool scores sites based on how often rare birds are seen there, and allows you to drill down on particular species, regions and times of year.</p>
-            <p>This tool looks at places identified on eBird as hotspots &ndash; popular places to go birding. Checklists submitted on eBird at these hotspots are the data source.</p>
-            <p>The data used can be inconsistent or distorted. The results should be treated as a useful guide rather than a precise prediction. Access to birding hotspots can vary so make sure you google the area before you grab your binoculars and get in the car.</p>
+            <p>This tool is designed for Sydney-based birders to choose where and when to see rare birds. It scores sites based on how often rare birds are seen there and lets you drill down on particular species, regions and times of year.</p>
+            <p>The tool gives you details on the birds you&rsquo;ll find at each site. This is a highlights list, not a full bird list. It picks out the species worth the trip &ndash; birds that are uncommon generally but likely at that location. Common birds like the Golden Whistler, Spotted Pardalote or Dusky Moorhen won&rsquo;t usually be picked up in the tool.</p>
+            <p>The data comes from checklists that birders submit to eBird, a citizen science platform. It covers locations identified by eBird as hotspots &ndash; popular places to go birding.</p>
+            <p>Access to birding hotspots can vary, so google the area before you grab your binoculars and get in the car.</p>
           </div>
         </details>
 
         <details class="technical-section">
           <summary>Scoring</summary>
           <div class="technical-section-body">
-            <p class="score-intro">Each hotspot receives a score showing how often rare birds are seen there. For example, you can expect to see 4 rare birds on a trip to a hotspot with a score of 4.</p>
+            <p class="score-intro">Each hotspot receives a score showing how often rare birds are seen there. For example you can expect to see about 4 rare species on a trip to a hotspot with a score of 4.</p>
             <h3 class="score-how">How it works</h3>
             <div class="score-concept">
               <p class="score-contribution-heading">A <strong>score contribution</strong> is calculated for each species at each hotspot.</p>
@@ -167,25 +168,24 @@
         <details class="technical-section">
           <summary>The Sydney region</summary>
           <div class="technical-section-body">
-            <p>This tool is intended for Sydney-based birders and so looks at hotspots within a reasonable distance of Sydney.</p>
-            <p>The tool provides a few options under the Region filter:</p>
-            <ul><li>Greater Sydney and Illawarra, showing places you could drive to from central Sydney in a morning. This is the default option.</li><li>Greater Sydney and surrounds, showing all the surrounding areas including the South Coast, ACT and Hunter Valley.</li><li>A specific subregion, for example the Central Coast.</li></ul>
+            <p>This tool is intended for Sydney-based birders, so it focuses on hotspots within reach of Sydney.</p>
+            <p>The Region filter lets you set how wide to cast the net, out to the full coverage area or zooming in on a single subregion:</p>
+            <ul><li>Greater Sydney and Illawarra &ndash; places you can generally reach for early morning birding from central Sydney, including the Blue Mountains and Illawarra. This is set as the default.</li><li>Greater Sydney and surrounds &ndash; the widest option, adding further-flung areas including the South Coast, ACT and Hunter Valley.</li><li>Choose subregion &ndash; zoom in on one area, such as the Central Coast.</li></ul>
           </div>
         </details>
 
         <details class="technical-section theme-blue">
           <summary>Months and seasons</summary>
           <div class="technical-section-body">
-            <p>Birds have seasonal movement patterns and knowing when to search for them is often as important as knowing where to go.</p>
-            <p>The tool identifies which species have seasonal patterns at which places. This is then used to calculate how each hotspot&rsquo;s score changes month to month. This means you can see when to visit the hotspot to see the most seasonal migrants.</p>
+            <p>Birds move with the seasons, and knowing when to search for a species is often as important as knowing where. For each hotspot, the tool tracks which birds are around throughout the year and how the hotspot&rsquo;s score rises and falls with them. This means you can see the best time to visit for rare birds.</p>
           </div>
         </details>
 
         <details class="technical-section theme-orange">
           <summary>Orange flags</summary>
           <div class="technical-section-body">
-            <p>The data used by this tool is observations submitted by ordinary people to eBird. This means it can be inconsistent and distorted. The tool tries to correct this, but this cannot be done perfectly.</p>
-            <p>Where the tool identifies a concern with the data, it will apply an orange flag to encourage caution. For example, orange flags are applied when a hotspot has a low number of checklists or when a species has not been recorded at a hotspot in the last three years.</p>
+            <p>The data used by this tool is observations submitted by ordinary people to eBird. Observers visit hotspots inconsistently and record in different ways, so the data can be patchy or skewed. The tool tries to correct this, but this cannot be done perfectly. For this reason, the tool should be used as a guide rather than a perfect prediction.</p>
+            <p>Where the tool identifies a concern, it adds an <span class="badge badge-orange">orange flag</span> to encourage caution, for example when a hotspot has a low number of checklists or when a species has not been recorded there in the last three years.</p>
           </div>
         </details>
       </div></div>
@@ -222,9 +222,9 @@
             <p>Each species is assigned a regional probability using all checklists across Greater Sydney and surrounds.</p>
             <div class="formula">regional probability = checklists across Greater Sydney and surrounds reporting the species &divide; all checklists across Greater Sydney and surrounds</div>
             <h3>Rarity weighting</h3>
+            <p>Each species has one rarity weighting. This variable does not change between hotspots.</p>
             <div class="formula">rarity weighting = (1 &minus; regional probability)<sup>20</sup></div>
             <p>This represents the probability that the species does not appear on any of 20 randomly selected checklists from the dataset. Hotspots with more submitted checklists have more influence on regional probability than hotspots with fewer checklists. This means a species that is widespread in less-visited areas would receive a higher rarity weighting.</p>
-            <p>Each species has one rarity weighting. This variable does not change between hotspots.</p>
             <h3>Hotspot probability</h3>
             <p>Hotspot probability is calculated for each species at each hotspot.</p>
             <div class="formula">hotspot probability = checklists at the hotspot reporting the species &divide; all checklists at the hotspot</div>
