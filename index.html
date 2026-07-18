@@ -235,6 +235,7 @@
             <p>Each species has one rarity weighting. This variable does not change between hotspots.</p>
             <div class="formula">rarity weighting = (1 &minus; regional probability)<sup>20</sup></div>
             <p>This represents the probability that the species does not appear on any of 20 randomly selected checklists from the dataset. Hotspots with more submitted checklists have more influence on regional probability than hotspots with fewer checklists. This means a species that is widespread in less-visited areas would receive a higher rarity weighting.</p>
+            <p>The figure of 20 checklists in this calculation is somewhat subjective. It was chosen so that scores would be dominated by genuinely rare species that might justify a trip to a specific hotspot.</p>
             <h3>Hotspot probability</h3>
             <p>Hotspot probability is calculated for each species at each hotspot.</p>
             <div class="formula">hotspot probability = checklists at the hotspot reporting the species &divide; all checklists at the hotspot</div>
@@ -247,7 +248,7 @@
             <div class="formula">hotspot score = sum of all species score contributions</div>
             <p>The hotspot score is used by the tool to rank hotspots. Species with a score contribution of at least 0.10 are displayed in the main species list. Other species with a contribution of at least 0.05 are displayed under More species.</p>
             <h3>Common birds</h3>
-            <p>The way rarity ratings are calculated means that many common species will never appear by default in the main section of the hotspot level reports. There are 55 species in this category, for example the Satin Bowerbird, Chestnut Teal and Lewin&rsquo;s Honeyeater. The tool works like this because it is designed to focus on rare and unusual birds that occur in fewer places. You can still explore these species using the &ldquo;Choose species&rdquo; feature. Each hotspot also has a link to the corresponding eBird page which will show a full bird list.</p>
+            <p>The way rarity ratings are calculated means that many common species will never appear by default in the main section of the hotspot level reports. There are 55 species in this category, for example the Satin Bowerbird, Chestnut Teal and Lewin&rsquo;s Honeyeater. The tool works like this because it is designed to focus on rare and unusual birds that occur in fewer places. Common species are a charming and rewarding part of bird watching, but they may not be the best guide for where you head to on a Sunday morning if you&rsquo;re looking to spot something you haven&rsquo;t seen before. You can still explore these species using the &ldquo;Choose species&rdquo; feature. Each hotspot also has a link to the corresponding eBird page which will show a full bird list.</p>
           </div>
         </details>
 
