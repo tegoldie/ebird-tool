@@ -1,0 +1,20 @@
+{
+  "reference_date": "2026-08-31",
+  "scope": [
+    "ACT",
+    "Blue Mountains",
+    "Capital Region",
+    "Central Coast",
+    "Central West",
+    "Hunter Valley exc Newcastle",
+    "Illawarra",
+    "Newcastle and Lake Macquarie",
+    "Southern Highlands and Shoalhaven",
+    "Sydney East",
+    "Sydney West"
+  ],
+  "sites": 4603,
+  "pairs": 312181,
+  "model": "effort-seasonality-v3",
+  "interpolation": "calendar_support_v1"
+}
