@@ -3,10 +3,11 @@
   'use strict';
   const original = {initControls, applyHashState, render, syncControls, baseFilteredSites,
     ensureSiteDetails, ensureSpecies, selectSpecies, selectHotspot, showSingleHotspot,
-    toggleSiteDetails, renderSpeciesSuggestions, renderHotspotSuggestions};
+    toggleSiteDetails, renderSpeciesSuggestions, renderHotspotSuggestions, renderMapStable};
   const day = {state, speciesNames, sites:null, viewport:null, details:[], scroll:0};
   let mode='day', night=null, loading=null, change=0, busy=false, pendingHash=null, shellReady=false;
   const pendingDay=new Set();
+  let mapOwner='day';
   const number=n=>Number(n).toLocaleString('en-AU');
   const date=s=>new Date(s+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});
   const active=()=>mode==='night';
@@ -47,9 +48,14 @@
   }
   function capture(view){
     view.scroll=window.scrollY;
-    if(window.__siteMap&&state.mapOpen)view.viewport={center:window.__siteMap.getCenter(),zoom:window.__siteMap.getZoom()};
+    view.inputDrafts={species:els.species.value,hotspot:els.hotspot.value};
+    if(window.__siteMap&&mapOwner===mode){const center=window.__siteMap.getCenter();view.viewport={center:[center.lat,center.lng],zoom:window.__siteMap.getZoom()}}
     if(!active()){dayInfo=els.info.innerHTML;dayTechnical=els.technicalInfo.innerHTML}
     if(!active())view.details=Array.from(els.reports.querySelectorAll('.site-card')).flatMap(article=>Array.from(article.querySelectorAll('details'),(d,index)=>({id:article.querySelector('[data-site-id]')?.dataset.siteId||article.querySelector('.site-title')?.textContent||article.querySelector('.site-collapse-title')?.textContent,index,open:d.open})));
+  }
+  function restoreViewport(view){
+    if(view.restoreViewport&&view.viewport&&window.__siteMap){window.__siteMap.setView(view.viewport.center,view.viewport.zoom,{animate:false})}
+    view.restoreViewport=false;
   }
   function restoreDayDetails(){
     els.reports.querySelectorAll('.site-card').forEach(article=>{
@@ -65,9 +71,13 @@
     message.classList.add('hidden');
     try{
       if(next==='night')await loadNight();
-      await Promise.allSettled([...pendingDay]);
-      // Let a scheduled day-map render complete before swapping its state reference.
-      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      // Include actions begun while a switch is waiting, not just those already
+      // pending when it was requested. No asynchronous day handler may outlive
+      // the state-reference swap.
+      do{
+        await Promise.allSettled([...pendingDay]);
+        await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      }while(pendingDay.size&&token===change);
       if(token!==change)return;
       capture(active()?night:day);
       mode=next;
@@ -77,27 +87,30 @@
       }else{state=day.state;sites=day.sites;speciesNames=day.speciesNames}
       document.body.dataset.mode=mode;
       const view=active()?night:day;
-      state.mapNeedsFit=!view.viewport;
+      view.restoreViewport=!!view.viewport&&!state.mapNeedsFit;
       els.reports.replaceChildren();
       els.info.innerHTML=active()?nightInfo():dayInfo;
       els.technicalInfo.innerHTML=active()?nightTechnical():dayTechnical;
       els.speciesSuggestions.classList.add('hidden');els.hotspotSuggestions.classList.add('hidden');
       render();
       if(!active())restoreDayDetails();
+      if(view.inputDrafts){els.species.value=view.inputDrafts.species;els.hotspot.value=view.inputDrafts.hotspot}
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
         if(token!==change)return;
-        if(window.__siteMap&&state.mapOpen&&view.viewport){window.__siteMap.invalidateSize({pan:false});window.__siteMap.setView(view.viewport.center,view.viewport.zoom,{animate:false})}
         window.scrollTo(0,view.scroll||0);
       }));
     }catch(error){
       console.error('Night mode could not be loaded',error);
       message.textContent='Night records could not be loaded. Use the mode button to try again.';
       message.classList.remove('hidden');
-      if(!active())original.render();
+      if(!active()&&!els.reports.querySelector('.site-card')){
+        const drafts={species:els.species.value,hotspot:els.hotspot.value};
+        original.render();els.species.value=drafts.species;els.hotspot.value=drafts.hotspot;
+      }
     }finally{if(token===change){busy=false;syncButton()}}
   }
   function syncButton(){if(button){button.disabled=busy||!shellReady;button.textContent=active()?'☀ Switch to Day Mode':'☾ Switch to Night Mode';button.setAttribute('aria-label',active()?'Switch to Day Mode':'Switch to Night Mode')}}
-  function nightInfo(){return `<div class="section technical-content"><h2>Night mode</h2><p>Explore birds recorded on checklists starting from an hour before sunset through to sunrise, including incidental sightings.</p><p>Explore owls (including boobooks), frogmouths, nightjars and owlet-nightjars. Every recorded species in these groups gets a main card, including single records. All other species are available under More species.</p><p>Counts describe submitted records, not your chances of finding a bird or the number of birds present. Coverage varies between places and dates.</p><p>Keep light use short, avoid playback at known roosts or nests, and stay on tracks.</p></div>`}
+  function nightInfo(){return `<div class="section technical-content"><h2>Night mode</h2><p>Explore owls (including boobooks), frogmouths, nightjars and owlet-nightjars. Every recorded species in these groups gets a main card, including single records. All other species are available under More species.</p><p>Counts describe submitted records, not your chances of finding a bird or the number of birds present. Coverage varies between places and dates.</p><p>Keep light use short, avoid playback at known roosts or nests, and stay on tracks.</p></div>`}
   function nightTechnical(){const m=night.data.meta;return `<div class="section technical-content"><h2>Night records: scope and method</h2><p>Checklist dates: ${date(m.dataFrom)} to ${date(m.dataTo)}. Generated ${esc(m.generated)}. Source: ${esc(m.source)}.</p><p>Include checklists starting at or after one hour before sunset, or before sunrise, using the hotspot's coordinates, local observation date and Australia/Sydney daylight-saving time. A start exactly one hour before sunset qualifies; a start exactly at sunrise does not. No minimum duration is required. Checklists with missing or invalid start times are excluded.</p><p>This descriptive view intentionally overlaps the day model. The day model's existing time rules and scores are unchanged.</p><p>Complete, incomplete and incidental hotspot checklists are included. Shared group checklists are counted once per hotspot; ungrouped duplicates use the existing metadata fingerprint. Species reported across qualifying group submissions are combined. Introduced species and unidentified “sp.” entries are excluded. Hotspots need no recent-record, multi-observer or minimum-checklist threshold; hotspots without retained species are omitted.</p><p>The nocturnal preset comprises ${night.data.nocturnalSpecies.map(esc).join(', ')} in this extract. All other species appear under More species.</p><p>Default ordering and map colours count species in that preset, then ordering uses total night checklists. With a species selected, order is by reporting checklists, then latest record. Counts are checklist reports, not individual bird totals. No probabilities, abundance estimates or monthly patterns are calculated.</p></div>`}
 
   initControls=function(){
@@ -124,6 +137,14 @@
   };
   ensureSiteDetails=async function(id){if(!active())return original.ensureSiteDetails(id)};
   ensureSpecies=async function(name){if(!active())return original.ensureSpecies(name)};
+  renderMapStable=function(rows){
+    if(active())return;
+    if(state.mapNeedsFit)day.restoreViewport=false;
+    const currentState=state;original.renderMapStable(rows);
+    if(state.mapOpen)requestAnimationFrame(()=>{
+      if(!active()&&state===currentState&&window.__siteMap){mapOwner='day';restoreViewport(day)}
+    });
+  };
   // Existing handlers continue using the same controls. Day requests finish before
   // switching state, so a delayed fetch cannot write into the other mode.
   function tracked(fn,args){const promise=Promise.resolve(fn(...args));pendingDay.add(promise);promise.finally(()=>pendingDay.delete(promise)).catch(()=>{});return promise}
@@ -159,6 +180,7 @@
     return `<article class="site-card site-card-open"><header class="site-header night-header"><div class="site-title-toggle" role="button" tabindex="0" aria-label="Collapse ${esc(site.name)}" onclick="if(!event.target.closest('a,button'))toggleSiteDetails('${site.id}')" onkeydown="if((event.key==='Enter'||event.key===' ')&&!event.target.closest('a,button')){event.preventDefault();toggleSiteDetails('${site.id}')}"><h1 class="site-title">${esc(site.name)}</h1><div class="site-meta"><span>${esc(site.region)}</span><a href="https://ebird.org/hotspot/${site.id}" target="_blank" rel="noopener noreferrer">eBird link</a></div></div><div class="site-header-side"><button class="site-hide-details" type="button" onclick="toggleSiteDetails('${site.id}')">Hide details ↑</button><div class="site-action-row">${state.hotspot?`<button class="btn site-location-action clear-hotspot-action" type="button" onclick="clearHotspot()">Clear hotspot</button>`:`<button class="btn site-location-action" type="button" onclick="showSingleHotspot('${site.id}')">See hotspot location</button>`}${state.species?`<button class="btn site-location-action clear-hotspot-action" type="button" onclick="clearSpecies()">Clear species</button>`:''}</div><div class="night-metrics">${metrics}</div></div></header><section class="section"><p class="section-note">Ordered by number of night checklists reporting each species</p>${main.length?`<div class="species-grid">${main.map(p=>speciesCard(p,site)).join('')}</div>`:'<p class="empty">No species from the nocturnal preset recorded on these checklists.</p>'}${other.length?`<details class="supporting night-other" data-night-other="${site.id}" ${otherExpanded?'open':''}><summary><span class="more-species-label">More species - ${otherExpanded?'hide':'show'}</span><span>${other.length} other species</span></summary><div class="chip-wrap">${other.map(p=>`<span class="species-chip ${state.species===p.name?'night-focal':''}">${esc(p.name)} <b>${number(p.checklists)} ${p.checklists===1?'checklist':'checklists'}</b></span>`).join('')}</div></details>`:''}</section></article>`;
   }
   function renderMap(rows){
+    if(state.mapNeedsFit)night.restoreViewport=false;
     const selectedSpecies=!!state.species;
     const bands=selectedSpecies?[[1,'1–2','#1e3a8a'],[3,'3–5','yellow'],[6,'6+','red']]:[[0,'0','white'],[1,'1–2','#1e3a8a'],[3,'3–5','yellow'],[6,'6+','red']];
     els.legend.innerHTML=`<h3 class="legend-title">${selectedSpecies?`Night checklists reporting ${esc(state.species)}`:'Nocturnal species recorded'}</h3>`+bands.map(([,label,color])=>`<div class="legend-row"><span class="swatch" style="background:${color}"></span>${label}</div>`).join('');
@@ -179,6 +201,7 @@
       window.__siteMap.invalidateSize({pan:false});
       if(selected&&state.focusSelectedHotspot)window.__siteMap.setView([selected.y,selected.x],10);
       else if(state.mapNeedsFit&&bounds.length)window.__siteMap.fitBounds(bounds,{padding:[20,20],maxZoom:10});
+      mapOwner='night';restoreViewport(night);
       state.mapNeedsFit=false;state.focusSelectedHotspot=false;
     });
   }
