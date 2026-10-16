@@ -464,13 +464,14 @@
     function speciesMonthChart(sp,month,site){
       if(!site.hasSeasonality||!Array.isArray(sp.monthly)||sp.monthly.length!==12||!sp.monthly.every(p=>Number.isFinite(p)&&p>=0&&p<=1))return '';
       const max=Math.max(...sp.monthly,0.01);
-      return `<div class="species-season"><div class="species-season-label">Monthly probability</div><div class="species-months" role="group" aria-label="Monthly probability; select a month to change this hotspot view">${sp.monthly.map((p,i)=>`<button type="button" class="species-month ${month===i+1?'active':''}" data-month="${i+1}" aria-pressed="${month===i+1}" aria-label="${MONTH_FULL[i]}: ${fmtPct(p)}. Show hotspot in ${MONTH_FULL[i]}" onclick="selectSpeciesMonth(this,${i+1})"><span class="species-month-tip" role="tooltip">${MONTH_FULL[i]} · ${fmtPct(p)}</span><span class="species-month-track"><span class="species-month-fill" style="--height:${(p/max*100).toFixed(2)}%"></span></span><span class="species-month-label">${MONTHS[i][0]}</span></button>`).join('')}</div></div>`;
+      return `<div class="species-season"><div class="species-season-label">Monthly probability</div><div class="species-months" role="group" aria-label="Monthly probability; select a month to change this hotspot view">${sp.monthly.map((p,i)=>`<button type="button" class="species-month ${month===i+1?'active':''}" data-month="${i+1}" aria-pressed="${month===i+1}" aria-label="${MONTH_FULL[i]}: ${fmtPct(p)}. ${month===i+1?'Show hotspot for All Year':`Show hotspot in ${MONTH_FULL[i]}`}" onclick="selectSpeciesMonth(this,${i+1})"><span class="species-month-tip" role="tooltip">${MONTH_FULL[i]} · ${fmtPct(p)}</span><span class="species-month-track"><span class="species-month-fill" style="--height:${(p/max*100).toFixed(2)}%"></span></span><span class="species-month-label">${MONTHS[i][0]}</span></button>`).join('')}</div></div>`;
     }
     function selectSpeciesMonth(button,month){
       const details=button.closest('details');
       const key=details.dataset.speciesKey;
       const siteId=details.dataset.siteId;
-      setSiteMonth(siteId,month);
+      if(button.getAttribute('aria-pressed')==='true')resetSiteMonth(siteId);
+      else setSiteMonth(siteId,month);
       const restored=Array.from(els.reports.querySelectorAll('details[data-species-key]')).find(d=>d.dataset.speciesKey===key);
       restored?.querySelector(`button[data-month="${month}"]`)?.focus({preventScroll:true});
     }
