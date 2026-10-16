@@ -16,5 +16,7 @@
   "sites": 4603,
   "pairs": 312181,
   "model": "effort-seasonality-v3",
-  "interpolation": "calendar_support_v1"
+  "interpolation": "calendar_support_v1",
+  "seasonality_reliability": "peer_reliability_v1",
+  "oneoff_reference": "unchanged_raw_peer"
 }
