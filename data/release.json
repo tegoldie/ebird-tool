@@ -18,5 +18,8 @@
   "model": "effort-seasonality-v3",
   "interpolation": "calendar_support_v1",
   "seasonality_reliability": "peer_reliability_v2",
-  "oneoff_reference": "unchanged_raw_peer"
+  "oneoff_reference": "unchanged_raw_peer",
+  "flag_policy": "hotspot_reliability_and_all_history_v1",
+  "documentation": "2026-10-20",
+  "documentation_sha256": "b81fc4b25915bbefdfb0ae8a7c5f4ab489d36b7fc8e39992970a592d610a2ce0"
 }

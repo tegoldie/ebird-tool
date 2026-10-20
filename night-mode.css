@@ -26,3 +26,5 @@ body[data-mode=night] .night-other{margin-top:18px}.night-other>summary{flex-wra
 body[data-mode=night] .leaflet-popup-content{color:#172026}
 @media(max-width:760px){body[data-mode=night] .night-filter-grid{grid-template-columns:1fr}body[data-mode=night] .night-head{grid-template-columns:minmax(0,1fr) auto}body[data-mode=night] .night-head>div:first-child{grid-column:1/-1}.summary-row{flex-wrap:wrap}.mode-switch{margin-left:0}body[data-mode=night] .night-header{grid-template-columns:1fr}.night-metrics{justify-content:flex-start}.night-count{max-width:170px}body[data-mode=night] .night-header .site-header-side{align-items:flex-start}}
 .map-panel{isolation:isolate}
+
+body[data-mode=night] .technical-meta>div{background:#1b2940;color:var(--ink)}
