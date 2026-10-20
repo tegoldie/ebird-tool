@@ -129,11 +129,24 @@
   applyHashState=function(){const p=new URLSearchParams(location.hash.slice(1));if(p.get('mode')==='night'){pendingHash=p;state.hashReady=true}else original.applyHashState()};
   syncControls=function(){
     original.syncControls();syncButton();
+    els.species.placeholder=active()?'Choose a nocturnal species or type any species':'Start typing a species';
     els.sort.closest('.filter-block').classList.toggle('hidden',active());
     els.threshold.closest('.best-hotspots-row').classList.toggle('hidden',active());
     qs('.filter-grid').classList.toggle('night-filter-grid',active());
     ordering?.classList.toggle('hidden',!active());
     if(active()){els.monthControl.classList.add('hidden');els.resetSiteViews.classList.add('hidden')}
+  };
+  renderSpeciesSuggestions=function(){
+    if(!active())return original.renderSpeciesSuggestions();
+    const norm=s=>s.trim().toLowerCase().replace(/[\s-]+/g,' ');
+    const q=norm(els.species.value);
+    if(document.activeElement!==els.species){els.speciesSuggestions.classList.add('hidden');return}
+    const browse=!q||q===norm(state.species);
+    const matches=browse?night.data.nocturnalSpecies:night.data.species.filter(s=>norm(s).includes(q)).slice(0,8);
+    if(!matches.length){els.speciesSuggestions.classList.add('hidden');return}
+    els.speciesSuggestions.innerHTML=matches.map(s=>`<button class="suggestion" type="button" data-species="${esc(s)}">${esc(s)}</button>`).join('');
+    els.speciesSuggestions.classList.remove('hidden');
+    els.speciesSuggestions.querySelectorAll('[data-species]').forEach(btn=>btn.addEventListener('click',()=>selectSpecies(btn.dataset.species)));
   };
   ensureSiteDetails=async function(id){if(!active())return original.ensureSiteDetails(id)};
   ensureSpecies=async function(name){if(!active())return original.ensureSpecies(name)};
