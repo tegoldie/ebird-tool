@@ -79,6 +79,7 @@
         await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
       }while(pendingDay.size&&token===change);
       if(token!==change)return;
+      if(typeof clearLoadMessage==='function')clearLoadMessage();
       capture(active()?night:day);
       mode=next;
       if(active()){
