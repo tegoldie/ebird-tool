@@ -28,3 +28,8 @@ body[data-mode=night] .leaflet-popup-content{color:#172026}
 .map-panel{isolation:isolate}
 
 body[data-mode=night] .technical-meta>div{background:#1b2940;color:var(--ink)}
+
+/* Use the same paragraph rhythm as the Day Mode documentation. */
+.night-documentation{max-width:940px;padding:16px}
+.night-documentation h2{margin:0 0 10px;font-size:1.1rem}
+@media(max-width:760px){.night-documentation{padding:14px 12px}}
