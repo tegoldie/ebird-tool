@@ -22,5 +22,7 @@
   "flag_policy": "hotspot_reliability_and_all_history_v1",
   "documentation": "2026-10-20",
   "documentation_sha256": "b81fc4b25915bbefdfb0ae8a7c5f4ab489d36b7fc8e39992970a592d610a2ce0",
-  "oneoff_policy_date": "2026-10-25"
+  "oneoff_policy_date": "2026-10-25",
+  "regional_oneoff_policy": "site_conditioned_regional_scan_v1",
+  "regional_oneoff_policy_date": "2026-10-25"
 }
