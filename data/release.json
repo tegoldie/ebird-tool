@@ -24,5 +24,18 @@
   "documentation_sha256": "b81fc4b25915bbefdfb0ae8a7c5f4ab489d36b7fc8e39992970a592d610a2ce0",
   "oneoff_policy_date": "2026-10-25",
   "regional_oneoff_policy": "site_conditioned_regional_scan_v1",
-  "regional_oneoff_policy_date": "2026-10-25"
+  "regional_oneoff_policy_date": "2026-10-25",
+  "level_uncertainty": {
+    "model": "annual_guarded12_cautious_species_v1",
+    "release": "2026-10-28",
+    "thresholds": [
+      0.2,
+      0.5
+    ],
+    "assessed_pairs": 37334,
+    "labels": {
+      "probability may be lower": 14239,
+      "probability highly uncertain": 468
+    }
+  }
 }
