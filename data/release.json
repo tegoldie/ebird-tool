@@ -38,5 +38,8 @@
       "probability very uncertain": 468
     },
     "label_revision": "2026-10-29"
-  }
+  },
+  "orange_flag_presentation": "one_off_dominant_v1",
+  "orange_flag_presentation_date": "2026-10-29",
+  "orange_flag_documentation_sha256": "796f027383ddd1577bcc9d60aa00cdbf153833977a101e8f3ab6abd81fedb6b3"
 }
