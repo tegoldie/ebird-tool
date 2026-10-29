@@ -34,8 +34,9 @@
     ],
     "assessed_pairs": 37334,
     "labels": {
-      "probability may be lower": 14239,
-      "probability highly uncertain": 468
-    }
+      "probability uncertain": 14239,
+      "probability very uncertain": 468
+    },
+    "label_revision": "2026-10-29"
   }
 }
