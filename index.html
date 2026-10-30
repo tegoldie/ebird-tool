@@ -72,7 +72,10 @@
     .filter-block{min-width:0}
     .filter-block>.subcontrol-grid{grid-template-columns:1fr;margin-top:10px}
     .filter-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-    .best-hotspots-row{display:flex;align-items:center;gap:7px;margin-top:12px}
+    .map-legend-controls{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px 24px;margin-top:10px}
+    .map-legend-controls .legend{margin-bottom:0}
+    .best-hotspots-row{display:flex;align-items:center;gap:7px}
+    .best-hotspots-note{text-transform:none;font-weight:400}
     .best-hotspots{display:flex;align-items:center;gap:7px;margin:0;color:var(--muted);font-size:.76rem;font-weight:800;text-transform:uppercase}
     .best-hotspots input{width:18px;height:18px;margin:0;accent-color:var(--blue)}
     .info-tip{position:relative;display:inline-grid;place-items:center;width:18px;height:18px;border:1px solid var(--line);border-radius:50%;background:#fff;color:var(--blue);font-size:.75rem;font-weight:900;text-transform:none;cursor:help}
@@ -216,13 +219,12 @@
         <div class="filter-block"><div class="control suggest-wrap" id="speciesControl"><label for="speciesSearch">Choose species</label><input id="speciesSearch" autocomplete="off" placeholder="Start typing a species"><div class="suggestions hidden" id="speciesSuggestions"></div></div><div class="filter-actions"><button class="btn clear-hotspot-btn hidden" id="clearSpeciesFiltersBtn" type="button">Clear species</button></div></div>
         <div class="filter-block"><div class="control suggest-wrap"><label for="hotspotSearch">Choose hotspot</label><input id="hotspotSearch" autocomplete="off" placeholder="Start typing a hotspot"><div class="suggestions hidden" id="hotspotSuggestions"></div></div><div class="filter-actions"><button class="btn clear-hotspot-btn hidden" id="clearHotspotBtn" type="button">Clear hotspot</button><button class="btn reset-hotspot-views filter-clear-hotspot hidden" id="resetSiteViewsBtn" type="button">Reset hotspot views</button></div></div>
       </div>
-      <div class="best-hotspots-row"><label class="best-hotspots" for="thresholdFilter"><input id="thresholdFilter" type="checkbox" checked>Show best hotspots only</label><span class="info-tip" tabindex="0" aria-label="Hotspots scoring at least 3.5">i<span class="info-tip-text">Hotspots scoring at least 3.5</span></span></div>
       <div class="summary-row"><div class="summary-line" id="summaryLine"></div></div>
     </section>
 
     <section class="panel map-panel" id="mapPanel">
       <button class="map-head" id="toggleMapBtn" type="button"><div class="panel-head"><h2 id="mapToggleTitle">Map - show</h2></div></button>
-      <div class="map-wrap hidden" id="mapBody"><div class="map-tools hidden"><button class="btn" id="zoomOutBtn" type="button">-</button><span class="map-zoom-label" id="mapZoomLabel">100%</span><button class="btn" id="zoomInBtn" type="button">+</button></div><div class="mock-map" id="mockMap" style="height:430px;background:#eef3f6"></div><div class="legend" id="legend" style="margin-top:10px"></div></div>
+      <div class="map-wrap hidden" id="mapBody"><div class="map-tools hidden"><button class="btn" id="zoomOutBtn" type="button">-</button><span class="map-zoom-label" id="mapZoomLabel">100%</span><button class="btn" id="zoomInBtn" type="button">+</button></div><div class="mock-map" id="mockMap" style="height:430px;background:#eef3f6"></div><div class="map-legend-controls"><div class="legend" id="legend"></div><div class="best-hotspots-row"><label class="best-hotspots" for="thresholdFilter"><input id="thresholdFilter" type="checkbox" checked><span>Show best hotspots only <span class="best-hotspots-note">(more than 3.5)</span></span></label></div></div></div>
     </section>
 
     <section id="reports"></section>
