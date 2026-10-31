@@ -199,6 +199,19 @@
     .site-card .metric-stack>.metric{display:grid;grid-template-rows:22px auto;align-content:start;gap:8px}
     .site-card .metric-stack>.metric>span{margin-top:0;min-height:2.6em;line-height:1.3;align-self:start}
     .site-card .metric-stack>.metric>strong,.site-card .metric-stack>.metric>select,.site-card .metric-stack>.metric>svg{align-self:center}
+
+    /* September is 78px in the current font; reserve 20px once for the arrow. */
+    .site-card .view-picker{position:relative}
+    .site-card .view-picker select{appearance:none;-webkit-appearance:none;width:100%;min-width:0;margin:0;padding:0 20px 0 0}
+    .site-card .view-picker::after{content:"";position:absolute;right:14px;top:18px;width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);pointer-events:none}
+    .site-card .metric-stack>.metric>span{text-align:right;width:100%}
+    .site-card .metric-stack>.location-chip>svg{justify-self:center}
+    @media(max-width:620px){
+      .site-header-side .metric-stack{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+      .site-card .metric-stack>.metric{padding:8px;gap:4px}
+      .site-card .metric-stack>.metric>span{min-height:0}
+      .site-card .view-picker::after{right:10px;top:16px}
+    }
 </style>
 <link rel="stylesheet" href="night-mode.css">
 </head>
