@@ -86,3 +86,6 @@ body[data-mode="night"] .main-filter-grid{grid-template-columns:1fr}
 .day-report .header-month-column:nth-child(-n+3) .header-month-tip{left:0;transform:none}
 .day-report .header-month-column:nth-last-child(-n+3) .header-month-tip{left:auto;right:0;transform:none}
 .day-report .header-month-column:hover .header-month-tip,.day-report .header-month-column:focus-visible .header-month-tip{display:block}
+
+/* Warning rectangles keep the same neutral surface on mobile and desktop. */
+.day-report .species-callout,.day-report .badge-orange{background:#eef0f2;color:#525b63;border-color:#df8a30;color-scheme:light}

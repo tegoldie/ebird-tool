@@ -88,7 +88,8 @@ async function loadAllSpeciesScores() {
     const oldCount = grid.children.length;
     if (target > oldCount) grid.insertAdjacentHTML('beforeend', rows.slice(oldCount,target).map(r => card(r,view.month,site)).join(''));
     state.cardShown[key] = target;
-    restoreDisclosures(grid);
+    // Restore only newly appended cards: resizing an open disclosure must not close it.
+    Array.from(grid.children).slice(oldCount).forEach(restoreDisclosures);
     const button = article.querySelector('[data-load-more]');
     button.hidden = target >= rows.length;
     if (clicked && button.hidden) grid.children[oldCount]?.querySelector('summary')?.focus({preventScroll:true});
