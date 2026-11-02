@@ -1,0 +1,88 @@
+/* Report changes are Day-only; separated control panels are shared with Night. */
+.main-filter-grid{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}
+.choose-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+.choose-toolbar{margin-top:16px}
+body[data-mode="night"] .bird-mode-control{display:none!important}
+body[data-mode="night"] .main-filter-grid{grid-template-columns:1fr}
+.day-report{display:block!important;overflow:visible}
+.day-report .day-report-header{position:relative;padding:16px 20px;background:linear-gradient(180deg,#fff,#fbfcfd);border-radius:8px}
+.day-report .header-toggle-hit{position:absolute;inset:0;z-index:0;width:100%;border:0;border-radius:8px;background:transparent;cursor:pointer}
+.day-report .day-report-header>:not(.header-toggle-hit){position:relative;z-index:1;pointer-events:none}
+.day-report .day-report-header :is(a,button,select){pointer-events:auto}
+.day-report .report-identity{display:flex;gap:12px;align-items:flex-start;min-width:0}
+.day-report .report-name{margin:0;min-width:0;flex:1;font-size:1.12rem;line-height:1.25;font-weight:650;white-space:normal;overflow:visible;overflow-wrap:anywhere}
+.day-report .report-month{flex:none;margin-left:auto;width:128px;max-width:128px;padding:6px 9px;border:1px solid #bdd6fb;border-radius:6px;background:#eaf3ff;color:var(--ink);font:650 .82rem/20px "Segoe UI",Arial,Helvetica,sans-serif;min-height:34px}
+.day-report .report-secondary{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-top:10px}
+.day-report .report-secondary .site-meta{margin:0;min-width:0;flex:1}
+.day-report .report-disclosure{flex:none;border:0;background:transparent;padding:0;color:var(--muted);font:600 .78rem/1.45 "Segoe UI",Arial,Helvetica,sans-serif;white-space:nowrap;cursor:pointer}
+.day-report .report-inline-score{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;font-size:.78rem;color:var(--muted)}
+.day-report .report-inline-score strong{font-size:.95rem;color:var(--ink);font-weight:650}
+.day-report .report-metrics.metric-stack{display:grid;grid-template-columns:repeat(3,123px);width:max-content;max-width:100%;min-width:0;gap:10px;margin-top:14px}
+.day-report .report-metric-row{display:flex;align-items:stretch;gap:16px;margin-top:14px}
+.day-report .report-metric-row .report-metrics{margin-top:0;flex:none}
+.day-report .header-monthly-profile{display:flex;flex:1;align-items:stretch;gap:3px;min-width:240px;max-width:240px;align-self:stretch;padding-top:8px}
+.day-report .header-month-column{display:flex;flex:1;min-width:0;flex-direction:column;justify-content:flex-end;padding:0;border:0;border-radius:3px;background:transparent;color:var(--muted);cursor:pointer}
+.day-report .header-month-track{display:flex;align-items:flex-end;height:44px}
+.day-report .header-month-fill{display:block;width:100%;background:#6ca3c2;border-radius:2px 2px 0 0}
+.day-report .header-month-letter{font-size:11px;line-height:16px;text-align:center}
+.day-report .header-month-column.active .header-month-fill{background:#102c50}
+.day-report .header-month-column.active .header-month-letter{color:#102c50;font-weight:700}
+.day-report .header-month-column:hover{background:#eaf3ff}
+.day-report .report-metrics>.metric{width:123px;min-width:0;text-align:right}
+.day-report .report-metrics>.location-chip>svg{justify-self:end}
+.day-report .site-action-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.day-report .site-action-row:empty{display:none}
+.day-report-open .day-report-header{border-bottom:1px solid var(--line)}
+.day-report .report-sticky{position:sticky;top:0;z-index:15;height:66px;margin-bottom:-66px;visibility:hidden;pointer-events:none}
+.day-report .report-sticky.is-stuck{visibility:visible;pointer-events:auto}
+.day-report .report-sticky>.report-identity{padding:12px 20px;background:var(--panel);border-bottom:1px solid var(--line);box-shadow:0 3px 8px #17202615;border-radius:8px 8px 0 0;align-items:center}
+.day-report .report-sticky .report-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day-report [data-sticky-name]{display:block;width:100%;max-width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left;font:inherit;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.day-report .sticky-full-name{position:absolute;top:100%;left:0;right:0;padding:12px 20px;background:var(--panel);border:1px solid var(--line);box-shadow:0 3px 8px #17202615;font-size:.86rem;overflow-wrap:anywhere}
+.day-report .show-more-species{display:block;margin:18px auto 0;border-radius:7px;border-color:var(--line);background:#fff;font-size:.82rem}
+.day-report .show-more-species[hidden]{display:none}
+.day-report .load-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.day-report .supporting{margin:0;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.day-report .supporting>summary{border:0;border-radius:8px;background:transparent}
+.day-report .supporting .chip-wrap{border:0;border-radius:0;margin:0;padding:0 12px 12px;background:transparent}
+.day-report .supporting .section-foot{margin:0;padding:0 12px 12px}
+@media(max-width:700px){
+  .main-filter-grid,.choose-grid{grid-template-columns:1fr}
+  .day-report .day-report-header{padding:14px}
+  .day-report .report-sticky>.report-identity{padding:12px 14px}
+  .day-report .report-name{font-size:1rem}
+  .day-report .report-identity{gap:8px}
+  .day-report .report-month{width:117px;max-width:117px;font-size:.75rem;padding:6px}
+  .day-report .report-metrics.metric-stack{grid-template-columns:repeat(2,123px);gap:8px}
+  .day-report .report-metric-row{flex-wrap:wrap;gap:12px}
+  .day-report .header-monthly-profile{flex-basis:100%;min-width:0;max-width:none;padding-top:0}
+}
+@media(pointer:coarse){.day-report .report-month{min-height:44px}.day-report .report-sticky{height:68px;margin-bottom:-68px}}
+/* Shared compact chart geometry in both Day modes. */
+.day-report .unified-card .species-months,.day-report .unified-card .prob-interval{height:44px}
+.day-report .unified-card .species-month-track{height:26px}
+
+/* Match interval caption to month letters; keep a 4px gap below the rail. */
+.day-report .unified-card .interval-caption{font-family:inherit;font-size:9px;font-weight:400;line-height:14px;height:14px;margin-top:0}
+@container(max-width:220px){.day-report .unified-card .interval-caption{font-size:8px}}
+
+/* Approved compact adaptive name header, shared by both Day modes. */
+.day-report .unified-card .species-name{font-size:14px}
+.day-report .unified-card .probability{font-size:18.5px;min-width:0}
+.day-report .unified-card.name-fallback .species-top{position:relative;grid-template-columns:minmax(0,1fr);row-gap:0}
+.day-report .unified-card.name-fallback .species-top.has-photo{grid-template-columns:56px minmax(0,1fr)}
+.day-report .unified-card.name-fallback .species-photo-link{grid-column:1;grid-row:1}
+.day-report .unified-card.name-fallback .species-name{grid-column:1;grid-row:1}
+.day-report .unified-card.name-fallback .has-photo .species-name{grid-column:2}
+.day-report .unified-card.name-fallback .probability{position:absolute;right:0;bottom:0;white-space:nowrap}
+.day-report .unified-card.name-full-width .has-photo .species-name{grid-column:1/-1;grid-row:1}
+.day-report .unified-card.name-full-width .species-photo-link{grid-column:1;grid-row:2}
+.day-report .unified-card.name-full-width .probability{position:static;grid-column:2;grid-row:2}
+
+/* Preserve live spacing and monthly tooltip treatment. */
+.choose-grid .filter-actions{margin-top:8px}
+.day-report .header-month-column{position:relative}
+.day-report .header-month-tip{display:none;position:absolute;z-index:20;bottom:100%;left:50%;transform:translateX(-50%);padding:4px 7px;border-radius:4px;background:var(--ink);color:#fff;font-size:.72rem;white-space:nowrap;pointer-events:none;text-transform:none;font-weight:400}
+.day-report .header-month-column:nth-child(-n+3) .header-month-tip{left:0;transform:none}
+.day-report .header-month-column:nth-last-child(-n+3) .header-month-tip{left:auto;right:0;transform:none}
+.day-report .header-month-column:hover .header-month-tip,.day-report .header-month-column:focus-visible .header-month-tip{display:block}

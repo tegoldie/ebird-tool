@@ -1,0 +1,41 @@
+/* Approved compact chart; retain the live 220px grid minimum and 320px card cap. */
+
+.species-card.unified-card{width:100%;max-width:320px;min-width:0;box-sizing:border-box;container-type:inline-size}
+.unified-card .species-top{grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:start}
+.unified-card .species-top.has-photo{grid-template-columns:56px minmax(0,1fr) auto}
+.unified-card .species-name{font-size:15px;font-weight:600;line-height:1.25;min-width:0;overflow-wrap:anywhere}
+.unified-card .probability{min-width:52px;font-size:20.5px;line-height:1.05}
+.unified-card .probability small{margin-top:3px;font-size:9.5px;text-transform:uppercase}
+.species-main{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin-top:12px;justify-content:space-between;align-items:start}
+.species-main.has-interval{grid-template-columns:minmax(0,124px) minmax(80px,96px)}
+.species-chart-column{min-width:0;max-width:124px}
+.unified-card .species-season{margin:0;padding:0;border:0}
+.unified-card .species-months{width:100%;max-width:124px;height:62px;gap:1px}
+.unified-card .species-month-fill{background:#6ca3c2}
+.unified-card .species-month.active .species-month-fill{background:#102c50}
+.unified-card .species-month.active{color:#102c50;font-weight:700}
+.prob-interval{width:100%;max-width:96px;height:62px;display:flex;flex-direction:column;margin-top:0;color:var(--muted);font-size:11px;line-height:14px;font-variant-numeric:tabular-nums}
+.interval-axis{display:flex;justify-content:space-between}.interval-limits{position:relative;flex:none;height:17px;margin:0 3px}.interval-limits span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.interval-rail{position:relative;height:5px;border-radius:3px;background:var(--soft-line,#edf1f4);margin:4px 3px;flex:none}
+.interval-band{position:absolute;height:5px;background:#f4c48d}
+.interval-end{position:absolute;top:-3px;width:2px;height:11px;background:#c76b09;transform:translateX(-50%)}
+.interval-dot{position:absolute;top:-2px;width:9px;height:9px;border-radius:50%;background:#c76b09;transform:translateX(-50%)}
+.interval-caption{align-self:flex-end;width:max-content;max-width:100%;line-height:14px;margin-top:auto;text-align:right;white-space:normal;font-weight:400}
+.species-callout{box-sizing:border-box;width:100%;margin-top:8px;padding:6px 8px;background:#fff3e4;color:#a95408;border-left:3px solid #df8a30;border-radius:0 4px 4px 0;font-size:11px;font-weight:400;line-height:1.4;white-space:nowrap}
+.occurrence-callout{margin-top:12px}.occurrence-callout.with-interval{width:calc(100% - 142px)}
+.unified-card details{margin-top:12px}
+@container(max-width:300px){.species-main.has-interval{grid-template-columns:minmax(0,124px) minmax(80px,96px);gap:8px}.prob-interval{width:100%}.interval-caption{white-space:normal}.unified-card .species-months{gap:2px}.unified-card .species-month-label{display:block;width:100%;text-align:center}}
+@media(prefers-color-scheme:dark){.unified-card .species-month-fill{background:#6895b0}.unified-card .species-month.active .species-month-fill{background:#d2e8ff}.unified-card .species-month.active{color:#d2e8ff}.interval-band{background:#855421}.interval-dot,.interval-end{background:#f5ad58}.species-callout{background:#3d3022;color:#ffba70;border-color:#cd8a42}}
+
+.unified-card .species-month-track{height:44px}
+.unified-card .species-month-label{font-size:9px;line-height:14px;height:14px;margin-top:4px}
+
+/* 1 November: smaller chart; caption and rail share a width at the right edge. */
+.species-main.has-interval{grid-template-columns:minmax(0,124px) max-content;justify-content:space-between;column-gap:10px}
+.prob-interval{width:max-content;max-width:none;height:62px}
+.interval-caption{width:max-content;max-width:none!important;white-space:nowrap;align-self:flex-start;text-align:left;height:14px;line-height:14px;margin-top:auto}
+.interval-rail{align-self:stretch;margin-left:0;margin-right:0}
+.interval-limits{margin-left:0;margin-right:0}
+@container(max-width:300px){.species-main.has-interval{grid-template-columns:minmax(0,124px) max-content;column-gap:10px}.interval-caption{white-space:nowrap}}
+
+@container(max-width:220px){.prob-interval{font-size:10px}.unified-card .species-months{gap:0}.unified-card .species-month-label{font-size:8px}}

@@ -14,32 +14,33 @@
     "Sydney West"
   ],
   "sites": 4603,
-  "pairs": 312181,
+  "pairs": 311525,
   "model": "effort-seasonality-v3",
   "interpolation": "calendar_support_v1",
-  "seasonality_reliability": "peer_reliability_v2",
-  "oneoff_reference": "reliability_blend_flat_fallback_v1",
-  "flag_policy": "hotspot_reliability_and_all_history_v1",
-  "documentation": "2026-10-20",
-  "documentation_sha256": "b81fc4b25915bbefdfb0ae8a7c5f4ab489d36b7fc8e39992970a592d610a2ce0",
-  "oneoff_policy_date": "2026-10-25",
-  "regional_oneoff_policy": "site_conditioned_regional_scan_v1",
-  "regional_oneoff_policy_date": "2026-10-25",
-  "level_uncertainty": {
-    "model": "annual_guarded12_cautious_species_v1",
-    "release": "2026-10-28",
-    "thresholds": [
-      0.2,
-      0.5
-    ],
-    "assessed_pairs": 37334,
-    "labels": {
-      "probability uncertain": 14239,
-      "probability very uncertain": 468
-    },
-    "label_revision": "2026-10-29"
-  },
-  "orange_flag_presentation": "one_off_dominant_v1",
-  "orange_flag_presentation_date": "2026-10-29",
-  "orange_flag_documentation_sha256": "796f027383ddd1577bcc9d60aa00cdbf153833977a101e8f3ab6abd81fedb6b3"
+  "probability_model": "annual_guarded12_recency2_intervals_v1+fractional_detections_v1",
+  "computation_engine": "monthly_reuse_empty_lookup_v1",
+  "regions": [
+    "ACT",
+    "Blue Mountains",
+    "Capital Region",
+    "Central Coast",
+    "Central West",
+    "Hunter Valley exc Newcastle",
+    "Illawarra",
+    "Newcastle and Lake Macquarie",
+    "Southern Highlands and Shoalhaven",
+    "Sydney East",
+    "Sydney West"
+  ],
+  "recency_half_life_years": 2,
+  "interval_quantiles": [
+    0.1,
+    0.9
+  ],
+  "interval_conditioning": "fixed seasonal shape; average over annual conditions",
+  "decline_model": false,
+  "probability_warning_badges": false,
+  "slash_allocation": "35b8658645bcf09a921e6ad420298edf1215495cb02a9d4c7a7e4ab1cbd52b3e",
+  "release_id": "unified-all-birds-20261103",
+  "all_birds_ui": "all-birds-ui-20261102"
 }

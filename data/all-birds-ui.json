@@ -1,0 +1,12 @@
+{
+  "version": "all-birds-ui-20261102",
+  "before": {
+    "index.html": "a12d19064f7b12763a9f6323eff90b4f042e04266b57b73c6f6eed5da502bb89",
+    "night-mode.js": "b6f8d695b3fe931bcbba857496d29b1a0a3446f35d8b564a341b8812a6d48d51",
+    "unified_cards.js": "c9d6042389e1a7e66500ff9bd90fd8449b137f67af345c9c59c7de0e33783b17",
+    "unified_cards.css": "b09f328531e4b8b1d28ee2d9134548e12d42ff210ba53f7986ae5a60d48e153c"
+  },
+  "hotspots": 4603,
+  "pairs": 311525,
+  "hotspot_data_sha256": "711f0bd3ae4a315dd33153198721a01c0eb6ab13702b3eeaf6ebd646d74cc72a"
+}
