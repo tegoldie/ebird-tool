@@ -338,7 +338,7 @@
     async function bootstrap(){try{sites=await fetchJson('data/summary.json');await loadAllSpeciesScores();initControls();applyHashState();await Promise.all(Object.keys(state.siteDetails).filter(id=>state.siteDetails[id]).map(id=>ensureSiteDetails(id)));if(state.hotspot&&state.selectedSite)await ensureSiteDetails(state.selectedSite);if(speciesNames.includes(state.species))await ensureSpecies(state.species);render()}catch(error){els.reports.innerHTML='<p class="empty">The report data could not be loaded. Please refresh the page.</p>';console.error(error)}}
     // Started by night-mode.js after the mode adapters are installed.
   </script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="unified_cards.js?v=c9d6042389e1"></script><script src="all-birds.js?v=98b52a50e53a"></script><script src="night-mode.js?v=9e2c222112ef"></script></body>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="unified_cards.js?v=c9d6042389e1"></script><script src="all-birds.js?v=fa0c382eec7c"></script><script src="night-mode.js?v=9e2c222112ef"></script></body>
 </html>
 
 
