@@ -20,7 +20,7 @@ body[data-mode="night"] .main-filter-grid{grid-template-columns:1fr}
 .day-report .report-metrics.metric-stack{display:grid;grid-template-columns:repeat(3,123px);width:max-content;max-width:100%;min-width:0;gap:10px;margin-top:14px}
 .day-report .report-metric-row{display:flex;align-items:stretch;gap:16px;margin-top:14px}
 .day-report .report-metric-row .report-metrics{margin-top:0;flex:none}
-.day-report .header-monthly-profile{display:flex;flex:1;align-items:stretch;gap:3px;min-width:240px;max-width:240px;align-self:stretch;padding-top:8px}
+.day-report .header-monthly-profile{display:flex;flex:1;align-items:stretch;gap:3px;min-width:200px;max-width:200px;align-self:stretch;padding-top:8px}
 .day-report .header-month-column{display:flex;flex:1;min-width:0;flex-direction:column;justify-content:flex-end;padding:0;border:0;border-radius:3px;background:transparent;color:var(--muted);cursor:pointer}
 .day-report .header-month-track{display:flex;align-items:flex-end;height:44px}
 .day-report .header-month-fill{display:block;width:100%;background:#6ca3c2;border-radius:2px 2px 0 0}

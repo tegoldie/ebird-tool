@@ -139,7 +139,7 @@
   };
   renderSpeciesSuggestions=function(){
     if(!active())return original.renderSpeciesSuggestions();
-    const norm=s=>s.trim().toLowerCase().replace(/[\s-]+/g,' ');
+    const norm=s=>s.trim().toLowerCase().replace(/grey/g,'gray').replace(/[\s\u002d\u2010-\u2015]+/g,'');
     const q=norm(els.species.value);
     if(document.activeElement!==els.species){els.speciesSuggestions.classList.add('hidden');return}
     const browse=!q||q===norm(state.species);
