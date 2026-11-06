@@ -89,3 +89,7 @@ body[data-mode="night"] .main-filter-grid{grid-template-columns:1fr}
 
 /* Warning rectangles keep the same neutral surface on mobile and desktop. */
 .day-report .species-callout,.day-report .badge-orange{background:#eef0f2;color:#525b63;border-color:#df8a30;color-scheme:light}
+
+/* Shield controls and a 10px surrounding buffer from the header collapse overlay. */
+.day-report .day-report-header>.report-metric-row,.day-report .day-report-header>.site-action-row{pointer-events:auto}
+.day-report .report-metric-row::before{content:"";position:absolute;inset:-10px;z-index:-1;pointer-events:auto}
