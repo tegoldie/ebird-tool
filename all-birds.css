@@ -55,7 +55,7 @@ body[data-mode="night"] .main-filter-grid{grid-template-columns:1fr}
   .day-report .report-month{width:117px;max-width:117px;font-size:.75rem;padding:6px}
   .day-report .report-metrics.metric-stack{grid-template-columns:repeat(2,123px);gap:8px}
   .day-report .report-metric-row{flex-wrap:wrap;gap:12px}
-  .day-report .header-monthly-profile{flex-basis:100%;min-width:0;max-width:none;padding-top:0}
+  .day-report .header-monthly-profile{flex-basis:100%;min-width:0;max-width:min(200px,100%);padding-top:0}
 }
 @media(pointer:coarse){.day-report .report-month{min-height:44px}.day-report .report-sticky{height:68px;margin-bottom:-68px}}
 /* Shared compact chart geometry in both Day modes. */
