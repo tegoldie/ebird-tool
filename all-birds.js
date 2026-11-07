@@ -25,7 +25,7 @@ async function loadAllSpeciesScores() {
 
 (() => {
   const original = {initControls, syncControls, applyHashState, syncHash, monthScore, peakMonth,
-    color, card, monthBars, renderReports, layoutSpeciesCallouts, toggleSiteDetails};
+    color, card, monthBars, renderReports, layoutSpeciesCallouts, toggleSiteDetails, speciesMonthChart};
   let modeControl;
   const INITIAL_ROWS = 5;
   const BATCH_ROWS = 8;
@@ -234,18 +234,35 @@ async function loadAllSpeciesScores() {
     original.layoutSpeciesCallouts(article);
   };
 
+  // All months shares the probability/score scale with the twelve months.
+  speciesMonthChart = function(sp,month,site) {
+    if (!Array.isArray(sp.monthly) || sp.monthly.length!==12) return original.speciesMonthChart(sp,month,site);
+    const values=sp.monthly,all=sp.overallProb,peak=Math.max(all,...values,.01);
+    return `<div class="species-season"><div class="species-months has-all-months" style="--all-ratio:${all/peak}" role="group" aria-label="Monthly probability and All months; select a month to change this hotspot view"><span class="all-months-reference" aria-hidden="true"></span>${[...values,all].map((p,i)=>{
+      const annual=i===12,selected=annual?!month:month===i+1,label=annual?'All months':MONTH_FULL[i];
+      return `<button type="button" class="species-month ${annual?'all-months-column ':''}${selected?'active':''}" data-month="${annual?0:i+1}" aria-pressed="${selected}" aria-label="${label}: ${fmtPct(p)}. ${annual||selected?'Show hotspot for All months':`Show hotspot in ${label}`}" onclick="${annual?'selectAllSpeciesMonths(this)':`selectSpeciesMonth(this,${i+1})`}"><span class="species-month-tip" role="tooltip">${label} · ${fmtPct(p)}</span><span class="species-month-track"><span class="species-month-fill" style="--height:${p/peak*100}%"></span></span><span class="species-month-label">${annual?'All':MONTHS[i][0]}</span></button>`;
+    }).join('')}</div></div>`;
+  };
+  window.selectAllSpeciesMonths = function(button) {
+    const article=button.closest('article[data-species-key]');if(!article)return;
+    const key=article.dataset.speciesKey;resetSiteMonth(article.dataset.siteId);
+    Array.from(els.reports.querySelectorAll('article[data-species-key]')).find(a=>a.dataset.speciesKey===key)?.querySelector('.all-months-column')?.focus({preventScroll:true});
+  };
+
   function monthChip(site,view) {
     return `<select class="report-month" aria-label="Hotspot month for ${esc(site.name)}" onchange="setSiteView('${site.id}',this.value)">${siteViewOptions(view)}</select>`;
   }
   function headerMonthlyProfile(site,view) {
-    const values=siteScoreMonths(site);
-    if (!Array.isArray(values) || values.length!==12) return '';
-    const peak=Math.max(...values,.01);
-    return `<div class="header-monthly-profile" role="group" aria-label="Monthly ${speciesScoreName().toLowerCase()} for ${esc(site.name)}">${values.map((value,i)=>`<button class="header-month-column ${view.month===i+1?'active':''}" type="button" aria-pressed="${view.month===i+1}" aria-label="${MONTH_FULL[i]}: ${fmtScore(value)}. ${view.month===i+1?'Show hotspot in All months':`Show hotspot in ${MONTH_FULL[i]}`}" onclick="${view.month===i+1?'resetSiteMonth':'setSiteMonth'}('${site.id}'${view.month===i+1?'':`,${i+1}`})"><span class="header-month-tip" role="tooltip">${MONTH_FULL[i]} · ${fmtScore(value)}</span><span class="header-month-track"><span class="header-month-fill" style="height:${value/peak*100}%"></span></span><span class="header-month-letter">${MONTHS[i][0]}</span></button>`).join('')}</div>`;
+    const values=siteScoreMonths(site);if(!Array.isArray(values)||values.length!==12)return '';
+    const all=siteScore(site),peak=Math.max(all,...values,.01);
+    return `<div class="header-monthly-profile" style="--all-ratio:${all/peak}" role="group" aria-label="Monthly ${speciesScoreName().toLowerCase()} and All months for ${esc(site.name)}"><span class="all-months-reference" aria-hidden="true"></span>${[...values,all].map((value,i)=>{
+      const annual=i===12,selected=annual?!view.month:view.month===i+1,label=annual?'All months':MONTH_FULL[i];
+      return `<button class="header-month-column ${annual?'all-months-column ':''}${selected?'active':''}" type="button" aria-pressed="${selected}" aria-label="${label}: ${fmtScore(value)}. ${annual||selected?'Show hotspot in All months':`Show hotspot in ${label}`}" onclick="${annual||selected?'resetSiteMonth':'setSiteMonth'}('${site.id}'${annual||selected?'':`,${i+1}`})"><span class="header-month-tip" role="tooltip">${label} · ${fmtScore(value)}</span><span class="header-month-track"><span class="header-month-fill" style="height:${value/peak*100}%"></span></span><span class="header-month-letter">${annual?'All':MONTHS[i][0]}</span></button>`;
+    }).join('')}</div>`;
   }
   function identity(site,view,rank,{sticky=false}={}) {
     const name = esc(site.name);
-    return `<div class="report-identity"><h2 class="report-name">${sticky
+    return `<div class="report-identity">${sticky?'':`<button class="report-collapse-arrow" type="button" aria-expanded="${!!state.siteDetails[site.id]}" aria-label="${state.siteDetails[site.id]?'Collapse':'Expand'} ${esc(site.name)}" onclick="toggleSiteDetails('${site.id}')"><span aria-hidden="true">${state.siteDetails[site.id]?'↑':'↓'}</span></button>`}<h2 class="report-name">${sticky
       ? `<button type="button" data-sticky-name aria-expanded="false" title="${esc(site.name)}">${name}</button>` : name}</h2>${monthChip(site,view)}</div>`;
   }
   function header(site,view,rank,open) {
@@ -253,7 +270,7 @@ async function loadAllSpeciesScores() {
     const svg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>';
     return `<header class="day-report-header"><button class="header-toggle-hit" type="button" aria-expanded="${open}" aria-label="${open?'Collapse':'Expand'} ${esc(site.name)}" onclick="toggleSiteDetails('${site.id}')"></button>${identity(site,view,rank)}<div class="report-secondary">${open
       ? `<div class="site-meta"><span>${esc(site.region)}</span><a href="https://ebird.org/hotspot/${site.id}" target="_blank" rel="noopener noreferrer">eBird link</a></div>`
-      : `<div class="report-inline-score">${score}</div>`}<button class="report-disclosure" type="button" onclick="toggleSiteDetails('${site.id}')">${open?'Hide details ↑':'Show details ↓'}</button></div>${open
+      : `<div class="report-inline-score">${score}</div>`}</div>${open
       ? `<div class="report-metric-row"><div class="report-metrics metric-stack"><div class="metric"><strong>${view.checklists.toLocaleString()}</strong><span>${esc(view.checklistLabel)}</span></div><button class="metric location-chip" type="button" onclick="showSingleHotspot('${site.id}')">${svg}<span>see location</span></button><div class="metric">${score}</div></div>${headerMonthlyProfile(site,view)}</div><div class="site-action-row">${state.hotspot?'<button class="btn site-location-action clear-hotspot-action" type="button" onclick="clearHotspot()">Clear hotspot</button>':''}${state.species?'<button class="btn site-location-action clear-hotspot-action" type="button" onclick="clearSpecies()">Clear species</button>':''}</div>` : ''}</header>`;
   }
   siteHtml = function(site,rank) {
