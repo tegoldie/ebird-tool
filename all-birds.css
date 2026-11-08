@@ -104,4 +104,15 @@ body[data-mode="night"] .main-filter-grid{grid-template-columns:1fr}
 .day-report .all-months-reference{position:absolute;top:calc(var(--month-track-height) * (1 - var(--all-ratio)));left:0;right:0;border-top:1px dotted #426e8b;z-index:2;pointer-events:none}
 .day-report .header-month-column.all-months-column .header-month-letter{white-space:nowrap}
 .day-report .report-collapse-arrow{flex:none;align-self:flex-start;width:20px;min-height:24px;padding:0;border:0;background:transparent;color:var(--muted);font:600 19px/1.25 "Segoe UI",Arial,sans-serif;cursor:pointer}
-@media(prefers-color-scheme:dark){.day-report .all-months-column :is(.species-month-fill,.header-month-fill){background-color:#263e50;background-image:radial-gradient(circle,#9bbbd1 .7px,transparent .85px)}.day-report .all-months-column.active :is(.species-month-fill,.header-month-fill){background-color:#d2e8ff;background-image:radial-gradient(circle,#426e8b .7px,transparent .85px)}.day-report .all-months-reference{border-color:#9bbbd1}}
+
+
+/* Day-list captions and context directly beneath the Month control. */
+.day-report .section-caption{margin:0 0 10px;color:var(--muted);font-size:.78rem;line-height:1.45}
+.best-month-note{margin:6px 0 0;color:var(--muted);font-size:.9rem;line-height:1.45}
+/* Keep the established Day chart palette identical across device/theme settings. */
+.day-report .unified-card .species-month-fill,.day-report .header-monthly-profile .header-month-fill{background:#6ca3c2}
+.day-report .unified-card .species-month.active .species-month-fill,.day-report .header-monthly-profile .header-month-column.active .header-month-fill{background:#102c50}
+.day-report .unified-card .species-month.active,.day-report .header-monthly-profile .header-month-column.active .header-month-letter{color:#102c50}
+.day-report .all-months-column :is(.species-month-fill,.header-month-fill),.day-report .unified-card .all-months-column .species-month-fill,.day-report .header-monthly-profile .all-months-column .header-month-fill{background:#dce9f1 radial-gradient(circle at 1px 1px,#426e8b .65px,transparent .85px) 0 0/4px 4px repeat}
+.day-report .all-months-column.active :is(.species-month-fill,.header-month-fill),.day-report .unified-card .species-month.all-months-column.active .species-month-fill,.day-report .header-monthly-profile .header-month-column.all-months-column.active .header-month-fill{background:#102c50 radial-gradient(circle at 1px 1px,#dce9f1 .65px,transparent .85px) 0 0/4px 4px repeat}
+.day-report .all-months-reference{border-color:#426e8b}

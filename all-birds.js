@@ -59,13 +59,12 @@ async function loadAllSpeciesScores() {
   function supportingContent(site) {
     const rows = supportRows(site, siteDisplayView(site));
     const note = isAllBirds() ? 'includes all species with a probability less than 10%'
-      : 'includes species with a rare species score contribution of at least 0.05';
+      : 'Species with 0.05 to 0.1 rarity points';
     return `<div class="chip-wrap">${rows.map(row => `<span class="species-chip">${esc(row.sp.name)} <b>${fmtPct(row.prob)}</b></span>`).join('') || '<span class="empty">None.</span>'}</div><p class="section-foot">${note}</p>`;
   }
   function thresholdNote(view) {
-    if (!isAllBirds()) return 'includes species with a rare species score contribution of at least 0.1';
-    return view.month ? 'includes species with a probability of at least 10% in the selected month or All months'
-      : 'includes species with a probability of at least 10%';
+    return isAllBirds() ? 'Species ordered by probability (10% or more)'
+      : 'Species ordered by rarity points (0.1 or more)';
   }
   function columnCount(grid) {
     const columns = getComputedStyle(grid).gridTemplateColumns;
@@ -122,6 +121,8 @@ async function loadAllSpeciesScores() {
     chooseGrid.append(speciesBlock, hotspotBlock); choose.append(chooseGrid);
     grid.closest('.toolbar').after(choose);
     grid.classList.add('main-filter-grid');
+    const bestMonthNote=document.createElement('p');bestMonthNote.id='bestMonthNote';bestMonthNote.className='best-month-note';bestMonthNote.hidden=true;
+    els.sort.closest('.control').after(bestMonthNote);
     const block = document.createElement('div'); block.className = 'filter-block bird-mode-control';
     block.innerHTML = '<div class="control"><label for="birdMode">Mode</label><select id="birdMode"><option value="rare">Rare birds</option><option value="all">All birds</option></select></div>';
     grid.prepend(block); modeControl = block.querySelector('select');
@@ -174,6 +175,9 @@ async function loadAllSpeciesScores() {
     modeControl.closest('.filter-block').classList.toggle('hidden',!day());
     modeControl.value = state.birdMode || 'rare';
     document.body.dataset.birds = isAllBirds() ? 'all' : 'rare';
+    const bestMonthNote=qs('#bestMonthNote');
+    bestMonthNote.hidden=!day() || state.sort!=='peak';
+    bestMonthNote.textContent=state.species ? 'Each hotspot is shown in its best month for this species' : 'Each hotspot is shown in its own best month';
     if (day() && thresholdOn()) state.threshold = isAllBirds() ? '20' : '3.5';
     const note = els.threshold.closest('.best-hotspots').querySelector('.best-hotspots-note');
     if (note && day()) note.textContent = isAllBirds() ? '(more than 20)' : '(more than 3.5)';
@@ -200,7 +204,7 @@ async function loadAllSpeciesScores() {
     return `One off occurrence: ${MONTHS[a[1]-1]} ${a[0]}–${MONTHS[b[1]-1]} ${b[0]}`;
   };
   card = function(row,month,site) {
-    const html = original.card(row,month,site).replace(/(?<!rare species )score contribution/g,'rare species score contribution').replace('<small>All months</small>','');
+    const html = original.card(row,month,site).replace(/\b(?:rare species )?score contribution/g,'rarity points').replace('<small>All months</small>','');
     if (!isAllBirds()) return html;
     const template = document.createElement('template'); template.innerHTML = html;
     const article = template.content.firstElementChild;
@@ -279,7 +283,7 @@ async function loadAllSpeciesScores() {
     const rows = mainRows(site,view,view.speciesView?.sp), key = batchKey(site.id);
     const count = Math.min(rows.length,state.cardShown[key] || INITIAL_ROWS);
     const moreOpen = state.reportDisclosures[`more:${site.id}`];
-    return `<article class="site-card site-card-open day-report day-report-open" data-report-id="${site.id}"><div class="report-sticky" aria-hidden="true">${identity(site,view,rank,{sticky:true})}<div class="sticky-full-name" hidden>${esc(site.name)}</div></div>${header(site,view,rank,true)}<div class="day-report-body"><section class="section">${site.flags?.length?`<div class="badges hotspot-warnings">${site.flags.map(f=>`<span class="badge badge-orange">${esc(f)}</span>`).join('')}</div>`:''}<div class="species-grid">${rows.slice(0,count).map(row=>card(row,view.month,site)).join('')}</div><p class="section-foot">${thresholdNote(view)}</p><button class="btn show-more-species" type="button" data-load-more onclick="showMoreBirds('${site.id}')" ${count>=rows.length?'hidden':''}>Show more ↓</button><span class="load-status" role="status" aria-live="polite"></span></section></div><section class="section supporting-section"><details class="supporting" data-supporting-site="${site.id}" ${moreOpen?'open data-loaded="true"':''}><summary><span class="more-species-label">More species - ${moreOpen?'hide':'show'}</span></summary><div class="supporting-content">${moreOpen?supportingContent(site):''}</div></details></section></article>`;
+    return `<article class="site-card site-card-open day-report day-report-open" data-report-id="${site.id}"><div class="report-sticky" aria-hidden="true">${identity(site,view,rank,{sticky:true})}<div class="sticky-full-name" hidden>${esc(site.name)}</div></div>${header(site,view,rank,true)}<div class="day-report-body"><section class="section">${site.flags?.length?`<div class="badges hotspot-warnings">${site.flags.map(f=>`<span class="badge badge-orange">${esc(f)}</span>`).join('')}</div>`:''}<p class="section-caption">${thresholdNote(view)}</p><div class="species-grid">${rows.slice(0,count).map(row=>card(row,view.month,site)).join('')}</div><button class="btn show-more-species" type="button" data-load-more onclick="showMoreBirds('${site.id}')" ${count>=rows.length?'hidden':''}>Show more ↓</button><span class="load-status" role="status" aria-live="polite"></span></section></div><section class="section supporting-section"><details class="supporting" data-supporting-site="${site.id}" ${moreOpen?'open data-loaded="true"':''}><summary><span class="more-species-label">More species - ${moreOpen?'hide':'show'}</span></summary><div class="supporting-content">${moreOpen?supportingContent(site):''}</div></details></section></article>`;
   };
 
   let gridObserver, headerObserver;
