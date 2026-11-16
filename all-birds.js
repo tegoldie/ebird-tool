@@ -26,7 +26,7 @@ async function loadAllSpeciesScores() {
 (() => {
   const original = {initControls, syncControls, applyHashState, syncHash, monthScore, peakMonth,
     color, card, monthBars, renderReports, layoutSpeciesCallouts, toggleSiteDetails, speciesMonthChart};
-  let modeControl;
+  let bestMonthNote;
   const INITIAL_ROWS = 5;
   const BATCH_ROWS = 8;
   const day = () => document.body.dataset.mode !== 'night';
@@ -121,21 +121,8 @@ async function loadAllSpeciesScores() {
     chooseGrid.append(speciesBlock, hotspotBlock); choose.append(chooseGrid);
     grid.closest('.toolbar').after(choose);
     grid.classList.add('main-filter-grid');
-    const bestMonthNote=document.createElement('p');bestMonthNote.id='bestMonthNote';bestMonthNote.className='best-month-note';bestMonthNote.hidden=true;
+    bestMonthNote=document.createElement('p');bestMonthNote.id='bestMonthNote';bestMonthNote.className='best-month-note';bestMonthNote.hidden=true;
     els.sort.closest('.control').after(bestMonthNote);
-    const block = document.createElement('div'); block.className = 'filter-block bird-mode-control';
-    block.innerHTML = '<div class="control"><label for="birdMode">Mode</label><select id="birdMode"><option value="rare">Rare birds</option><option value="all">All birds</option></select></div>';
-    grid.prepend(block); modeControl = block.querySelector('select');
-    modeControl.addEventListener('change', () => {
-      const drafts = {species:els.species.value,hotspot:els.hotspot.value};
-      // A scoring change must not cancel a pending species/hotspot selection.
-      state.birdMode = modeControl.value;
-      if (thresholdOn()) state.threshold = isAllBirds() ? '20' : '3.5';
-      // Keep the user's map viewport; markers and scores still refresh.
-      render();
-      els.species.value = drafts.species; els.hotspot.value = drafts.hotspot;
-      if(typeof renderSpeciesSuggestions==='function')renderSpeciesSuggestions(); if(typeof renderHotspotSuggestions==='function')renderHotspotSuggestions();
-    });
     els.reports.addEventListener('toggle', event => {
       if (!day() || !event.target.matches('details')) return;
       records(); const detail = event.target;
@@ -157,6 +144,17 @@ async function loadAllSpeciesScores() {
       full.hidden = !full.hidden; name.setAttribute('aria-expanded',String(!full.hidden));
     });
   };
+  window.selectDayBirdMode = function(choice) {
+    if (!day() || state.birdMode === choice) return;
+    const drafts = {species:els.species.value,hotspot:els.hotspot.value};
+    // A scoring change must not cancel a pending species/hotspot selection.
+    state.birdMode = choice;
+    if (thresholdOn()) state.threshold = isAllBirds() ? '20' : '3.5';
+    // Keep the user's map viewport; markers and scores still refresh.
+    render();
+    els.species.value = drafts.species; els.hotspot.value = drafts.hotspot;
+    if(typeof renderSpeciesSuggestions==='function')renderSpeciesSuggestions(); if(typeof renderHotspotSuggestions==='function')renderHotspotSuggestions();
+  };
   applyHashState = function() {
     original.applyHashState();
     const p = new URLSearchParams(location.hash.slice(1));
@@ -171,11 +169,8 @@ async function loadAllSpeciesScores() {
   };
   syncControls = function() {
     original.syncControls();
-    if (!modeControl) return;
-    modeControl.closest('.filter-block').classList.toggle('hidden',!day());
-    modeControl.value = state.birdMode || 'rare';
+    if (!bestMonthNote) return;
     document.body.dataset.birds = isAllBirds() ? 'all' : 'rare';
-    const bestMonthNote=qs('#bestMonthNote');
     bestMonthNote.hidden=!day() || state.sort!=='peak';
     bestMonthNote.textContent=state.species ? 'Each hotspot is shown in its best month for this species' : 'Each hotspot is shown in its own best month';
     if (day() && thresholdOn()) state.threshold = isAllBirds() ? '20' : '3.5';

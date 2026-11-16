@@ -13,7 +13,7 @@
   const active=()=>mode==='night';
   const nocturnalCount=s=>s.species.filter(p=>night.preset.has(p.name)).length;
   const reporting=s=>s.species.find(p=>p.name===state.species);
-  let dayInfo, dayTechnical, button, message, ordering;
+  let dayInfo, dayTechnical, modePanel, message, ordering;
 
   function defaultNightState(){return {region:'sydney-core',lastBroadRegion:'sydney-core',regionChoice:slug(subregions[0]),threshold:'off',sort:'overall',month:9,species:'',speciesReturn:null,hotspot:'',mapOpen:true,mapNeedsFit:true,focusSelectedHotspot:false,infoOpen:false,technicalInfoOpen:false,selectedSite:null,siteViews:{},siteDetails:{},hashReady:true,mapRenderToken:0,otherOpen:{},speciesOpen:{}}}
   async function loadNight(){
@@ -63,11 +63,11 @@
       article.querySelectorAll('details').forEach((d,index)=>{const prior=day.details.find(x=>x.id===id&&x.index===index);if(prior)d.open=prior.open});
     });
   }
-  async function setMode(next,{hash=null}={}){
+  async function setMode(next,{hash=null,birdMode=null}={}){
     if(!['day','night'].includes(next))throw new Error('Unknown mode');
     const token=++change;
     if(next===mode&&!busy)return;
-    busy=true;if(button){button.disabled=true;button.textContent=next==='night'?'Loading Night Mode…':'Switching…'}
+    busy=true;syncModeButtons();
     message.classList.add('hidden');
     try{
       if(next==='night')await loadNight();
@@ -85,7 +85,9 @@
       if(active()){
         if(hash)readNightHash(hash);
         state=night.state;sites=night.sites;speciesNames=night.data.species;
-      }else{state=day.state;sites=day.sites;speciesNames=day.speciesNames}
+      }else{state=day.state;sites=day.sites;speciesNames=day.speciesNames;
+        if(birdMode)state.birdMode=birdMode;
+      }
       document.body.dataset.mode=mode;
       const view=active()?night:day;
       view.restoreViewport=!!view.viewport&&!state.mapNeedsFit;
@@ -108,17 +110,60 @@
         const drafts={species:els.species.value,hotspot:els.hotspot.value};
         original.render();els.species.value=drafts.species;els.hotspot.value=drafts.hotspot;
       }
-    }finally{if(token===change){busy=false;syncButton()}}
+    }finally{if(token===change){busy=false;syncModeButtons()}}
   }
-  function syncButton(){if(button){button.disabled=busy||!shellReady;button.textContent=active()?'☀ Return to the day':'☾ Explore the night';button.setAttribute('aria-label',active()?'Return to the day':'Explore the night')}}
+  const modeLabels={all:'All Birds Mode',rare:'Rare Birds Mode',night:'Night Birds Mode'};
+  function syncModeButtons(){
+    if(!modePanel)return;
+    const selected=active()?'night':state.birdMode||'rare';
+    for(const button of modePanel.querySelectorAll('[data-bird-mode]')){
+      button.disabled=busy||!shellReady;
+      button.setAttribute('aria-pressed',String(button.dataset.birdMode===selected));
+    }
+    modePanel.setAttribute('aria-busy',String(busy));
+    const description=modePanel.querySelector('.bird-mode-description');
+    const text='Placeholder text explaining '+modeLabels[selected]+' will appear here.';
+    if(description.textContent!==text)description.textContent=text;
+  }
   function nightInfo(){return "<div class=\"section night-documentation technical-section-body\"><h2>Night Mode</h2><p>Default Day Mode is designed for daytime birding. A separate Night Mode lets you explore records of nocturnal species like owls and Tawny Frogmouths.</p><p>Night records are much more sparse, so Night Mode shows where species have been reported and when, without estimating probabilities or tracking seasonal changes.</p><p>Nocturnal species can be recorded roosting during the day, so they also appear in default Day Mode. Similarly, Night Mode can include daytime species, particularly on checklists that overlap dusk or dawn.</p></div>"}
   function nightTechnical(){return "<div class=\"section night-documentation technical-section-body\"><h2>Night Mode</h2><p>Night Mode is for exploring checklists made at night, and records of nocturnal species such as owls, frogmouths, nightjars and owlet-nightjars. For each hotspot it shows how many checklists have reported each species, and when it was last reported.</p><p>Night Mode shows where birds have been reported and how recently, without estimating probabilities, scores or seasonal patterns. Its checklists are much fewer and are often submitted after targeted searches, so it does not apply the probability model used in default Day Mode.</p><p>Night Mode puts nocturnal species first. Owls, frogmouths, nightjars and owlet-nightjars are shown at every hotspot where they have been reported. Hotspots are ordered by how many different nocturnal species have been reported there.</p><p>Daytime species are also recorded on many night checklists, especially around dusk and dawn. These are listed in the collapsible More species section for each hotspot.</p><p>The numbers count checklists, not individual birds.</p><h3>Which checklists are included</h3><p>Night Mode includes checklists that start either:</p><ul><li>one hour before local sunset or later; or</li><li>before local sunrise.</li></ul><p>Only the start time matters. A checklist that starts before the evening cut-off isn’t included, even if it continues into the night, and a checklist that starts before sunrise is included, even if it continues into daylight.</p><p>Sunrise and sunset are calculated for each hotspot’s location and each date, using Sydney local time, including daylight saving.</p><p>Unlike default Day Mode, Night Mode also includes:</p><ul><li><strong>incomplete checklists</strong>, where the observer has not confirmed that they reported every species they identified</li><li><strong>incidental checklists</strong>, eBird’s category for sightings made when birding wasn’t the main activity, such as an owl seen while walking the dog</li><li><strong>hotspots with fewer than five checklists</strong></li></ul><h3>How Night Mode overlaps with default Day Mode</h3><p>The two modes share some checklists. Default Day Mode includes checklists starting from three hours before local sunrise up to, but not including, local sunset. Night Mode includes starts before sunrise or from one hour before sunset onwards. They therefore overlap for starts in the three hours before sunrise and the hour before sunset.</p><p>eBird records when a checklist started, not when each bird was seen, so Night Mode will pick up some species that were seen in daylight.</p><p>Nocturnal species are often recorded roosting during the day, and therefore will also appear in default Day Mode.</p><h3>Group outings</h3><p>When several people go birding together, one of them can share their eBird checklist with the others. Each member then has their own copy, which they can edit, for example by adding a bird only they saw or removing one they didn’t. So the copies of a shared checklist are mostly the same, but not always identical.</p><p>Both modes count each shared outing once. They differ in which species list stands for the outing:</p><ul><li><strong>Default Day Mode</strong> uses one member’s copy to represent the outing, including the species that member did not record.</li><li><strong>Night Mode</strong> combines species across the copies that meet its checklist rules. A species counts once for the outing if any qualifying member’s copy reports it.</li></ul></div>"}
 
   initControls=function(){
     original.initControls();day.sites=sites;dayInfo=els.info.innerHTML;dayTechnical=els.technicalInfo.innerHTML;
-    button=document.createElement('button');button.className='btn mode-switch';button.type='button';button.id='modeSwitch';button.disabled=true;
-    button.addEventListener('click',()=>setMode(active()?'day':'night'));qs('.summary-row').appendChild(button);syncButton();
-    message=document.createElement('p');message.className='night-load-message hidden';message.setAttribute('role','status');els.infoCard.before(message);
+    modePanel=document.createElement('section');
+    modePanel.className='bird-mode-panel';
+    const icons={
+      all:'<img class="bird-mode-magpie" src="images/magpie-mode.png" alt="">',
+      rare:'<span class="bird-mode-binoculars" aria-hidden="true"></span>',
+      night:'<span class="bird-mode-moon" aria-hidden="true">☾</span>'
+    };
+    const buttons=document.createElement('div');
+    buttons.className='bird-mode-buttons';
+    buttons.setAttribute('role','group');
+    buttons.setAttribute('aria-label','Bird Finder mode');
+    for(const [choice,label] of Object.entries(modeLabels)){
+      const button=document.createElement('button');
+      button.type='button';
+      button.dataset.birdMode=choice;
+      button.innerHTML=icons[choice];
+      const title=document.createElement('span');
+      title.textContent=label;
+      button.append(title);
+      button.addEventListener('click',async()=>{
+        if(choice==='night')await setMode('night');
+        else if(active())await setMode('day',{birdMode:choice});
+        else window.selectDayBirdMode(choice);
+        if(document.activeElement===document.body)button.focus({preventScroll:true});
+      });
+      buttons.append(button);
+    }
+    const description=document.createElement('p');
+    description.className='bird-mode-description';
+    description.setAttribute('role','status');
+    modePanel.append(buttons,description);
+    els.technicalInfoCard.after(modePanel);
+    message=document.createElement('p');message.className='night-load-message hidden';message.setAttribute('role','status');modePanel.after(message);
+    syncModeButtons();
     ordering=document.createElement('p');ordering.id='nightOrdering';ordering.className='night-ordering hidden';els.reports.before(ordering);
     els.reports.addEventListener('toggle',event=>{
       if(!active()||!els.reports.contains(event.target))return;
@@ -129,7 +174,7 @@
   };
   applyHashState=function(){const p=new URLSearchParams(location.hash.slice(1));if(p.get('mode')==='night'){pendingHash=p;state.hashReady=true}else original.applyHashState()};
   syncControls=function(){
-    original.syncControls();syncButton();
+    original.syncControls();syncModeButtons();
     els.species.placeholder=active()?'Choose a nocturnal species or type any species':'Start typing a species';
     els.sort.closest('.filter-block').classList.toggle('hidden',active());
     els.threshold.closest('.best-hotspots-row').classList.toggle('hidden',active());

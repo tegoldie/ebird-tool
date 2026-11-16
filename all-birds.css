@@ -1,9 +1,8 @@
 /* Report changes are Day-only; separated control panels are shared with Night. */
-.main-filter-grid{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}
+.main-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
 .choose-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
 .choose-toolbar{margin-top:16px}
-body[data-mode="night"] .bird-mode-control{display:none!important}
-body[data-mode="night"] .main-filter-grid{grid-template-columns:1fr}
+body[data-mode="night"] .main-filter-grid.night-filter-grid{grid-template-columns:1fr}
 .day-report{display:block!important;overflow:visible}
 .day-report .day-report-header{position:relative;padding:16px 20px;background:linear-gradient(180deg,#fff,#fbfcfd);border-radius:8px}
 .day-report .header-toggle-hit{position:absolute;inset:0;z-index:0;width:100%;border:0;border-radius:8px;background:transparent;cursor:pointer}
@@ -116,3 +115,23 @@ body[data-mode="night"] .main-filter-grid{grid-template-columns:1fr}
 .day-report .all-months-column :is(.species-month-fill,.header-month-fill),.day-report .unified-card .all-months-column .species-month-fill,.day-report .header-monthly-profile .all-months-column .header-month-fill{background:#dce9f1 radial-gradient(circle at 1px 1px,#426e8b .65px,transparent .85px) 0 0/4px 4px repeat}
 .day-report .all-months-column.active :is(.species-month-fill,.header-month-fill),.day-report .unified-card .species-month.all-months-column.active .species-month-fill,.day-report .header-monthly-profile .header-month-column.all-months-column.active .header-month-fill{background:#102c50 radial-gradient(circle at 1px 1px,#dce9f1 .65px,transparent .85px) 0 0/4px 4px repeat}
 .day-report .all-months-reference{border-color:#426e8b}
+
+.bird-mode-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0 12px}
+.bird-mode-buttons button{display:flex;align-items:center;justify-content:center;gap:10px;min-width:0;min-height:54px;padding:12px 16px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;font:650 16px/1.25 "Segoe UI",Arial,sans-serif;cursor:pointer}
+.bird-mode-buttons button[aria-pressed=true]{background:#fff7d6;border-color:#f2c94c;color:#172026}
+body[data-mode=night] .bird-mode-buttons button[aria-pressed=true]{background:#ffd544;border-color:#ffd544}
+.bird-mode-magpie,.bird-mode-binoculars,.bird-mode-moon{display:block;width:25px;height:25px;flex:none}
+.bird-mode-magpie{object-fit:contain}
+body[data-mode=night] .bird-mode-magpie{filter:invert(1)}
+.bird-mode-moon{font:29px/25px "Segoe UI Symbol",sans-serif}
+.bird-mode-binoculars{position:relative;background:linear-gradient(currentColor,currentColor) center 12px/8px 2px no-repeat}
+.bird-mode-binoculars::before,.bird-mode-binoculars::after{content:"";position:absolute;box-sizing:border-box;top:4px;width:10px;height:17px;border:2px solid currentColor;border-radius:4px 4px 5px 5px;background:linear-gradient(currentColor,currentColor) center 8px/100% 2px no-repeat}
+.bird-mode-binoculars::before{left:2px;transform:rotate(12deg)}
+.bird-mode-binoculars::after{right:2px;transform:rotate(-12deg)}
+.bird-mode-description{margin:0 0 16px;padding:12px 14px;background:var(--panel);color:var(--muted);border:1px solid var(--line);border-radius:8px;font-size:14px}
+@media(max-width:700px){
+  .bird-mode-buttons{gap:6px;margin-top:16px}
+  .bird-mode-buttons button{flex-direction:column;gap:7px;min-height:98px;padding:10px 5px;font-size:13px;line-height:1.3}
+  .bird-mode-buttons button>span:last-child{max-width:78px}
+  .bird-mode-description{padding:11px 12px;font-size:13px}
+}
