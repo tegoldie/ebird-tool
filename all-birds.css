@@ -106,7 +106,12 @@ body[data-mode="night"] .main-filter-grid.night-filter-grid{grid-template-column
 
 
 /* Day-list captions and context directly beneath the Month control. */
-.day-report .section-caption{margin:0 0 10px;color:var(--muted);font-size:.78rem;line-height:1.45}
+.day-report .section-caption{margin:10px 0;color:var(--muted);font-size:.78rem;line-height:1.45}
+.day-report .species-card-below-threshold{background:#dde5ea}
+.day-report .species-card-below-threshold .interval-rail{background:#c3cfd8}
+.day-report button.species-chip{border:1px solid transparent;font-family:inherit;cursor:pointer}
+.day-report button.species-chip:hover,.day-report button.species-chip[aria-pressed=true]{border-color:#a9caff;background:#eaf3ff}
+.day-report button.species-chip[aria-pressed=true]{text-decoration:underline;text-underline-offset:3px}
 .best-month-note{margin:6px 0 0;color:var(--muted);font-size:.9rem;line-height:1.45}
 /* Keep the established Day chart palette identical across device/theme settings. */
 .day-report .unified-card .species-month-fill,.day-report .header-monthly-profile .header-month-fill{background:#6ca3c2}

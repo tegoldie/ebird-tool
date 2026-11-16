@@ -29,6 +29,8 @@ async function loadAllSpeciesScores() {
   let bestMonthNote;
   const INITIAL_ROWS = 5;
   const BATCH_ROWS = 8;
+  const CARD_THRESHOLD = .1;
+  const supportingSelections = new Map();
   const day = () => document.body.dataset.mode !== 'night';
   const batchKey = id => `${state.birdMode || 'rare'}:${id}`;
   function records() {
@@ -37,34 +39,57 @@ async function loadAllSpeciesScores() {
     state.reportDisclosures ||= {};
   }
   function probability(sp, month) { return month && sp.monthly ? sp.monthly[month - 1] : sp.overallProb; }
-  function mainRows(site, view, focal) {
+  function speciesRow(sp, month, focal) {
+    const prob = probability(sp, month);
+    return {sp, prob, contrib:month && sp.monthly ? prob * sp.rarity : sp.contribution,
+      focal:sp.name === focal?.name};
+  }
+  function reportRows(site, view) {
     const all = isAllBirds();
-    const rows = site.species.map(sp => ({sp, prob:probability(sp, view.month),
-      contrib:view.month && sp.monthly ? sp.monthly[view.month - 1] * sp.rarity : sp.contribution,
-      focal:!!focal && sp.name === focal.name}));
-    const annual = row => all ? row.sp.overallProb : row.sp.contribution;
-    const current = row => all ? row.prob : row.contrib;
-    return rows.filter(row => row.focal || annual(row) >= .1 || current(row) >= .1)
-      .sort((a,b) => Number(b.focal)-Number(a.focal) || Number(annual(b)>=.1)-Number(annual(a)>=.1)
-        || annual(b)-annual(a) || a.sp.name.localeCompare(b.sp.name));
+    const main = [], supporting = [];
+    for (const sp of site.species) {
+      const row = speciesRow(sp, view.month, view.speciesView?.sp);
+      const annual = all ? sp.overallProb : sp.contribution;
+      const monthlyWeight = all ? 1 : sp.rarity;
+      if (row.focal || annual > CARD_THRESHOLD || sp.monthly?.some(prob => prob * monthlyWeight > CARD_THRESHOLD)) {
+        main.push(row);
+      } else {
+        supporting.push(row);
+      }
+    }
+    const annual = ({sp}) => all ? sp.overallProb : sp.contribution;
+    main.sort((a,b) => Number(b.focal)-Number(a.focal) || annual(b)-annual(a)
+      || a.sp.name.localeCompare(b.sp.name));
+    supporting.sort((a,b) => b.prob-a.prob || a.sp.name.localeCompare(b.sp.name));
+    return {main, supporting};
   }
-  function supportRows(site, view) {
-    const main = new Set(mainRows(site, view, view.speciesView?.sp).map(row => row.sp.name));
-    return site.species.map(sp => ({sp, prob:probability(sp,view.month),
-      contrib:probability(sp,view.month)*sp.rarity}))
-      .filter(row => !main.has(row.sp.name) && (isAllBirds()
-        ? row.prob < .1 : row.contrib >= .05 && row.contrib < .1))
-      .sort((a,b) => b.prob-a.prob || a.sp.name.localeCompare(b.sp.name));
-  }
-  function supportingContent(site) {
-    const rows = supportRows(site, siteDisplayView(site));
-    const note = isAllBirds() ? 'includes all species with a probability less than 10%'
-      : 'Species with 0.05 to 0.1 rarity points';
-    return `<div class="chip-wrap">${rows.map(row => `<span class="species-chip">${esc(row.sp.name)} <b>${fmtPct(row.prob)}</b></span>`).join('') || '<span class="empty">None.</span>'}</div><p class="section-foot">${note}</p>`;
+  function supportingContent(site, rows) {
+    const selected = supportingSelections.get(site.id);
+    return `<div class="chip-wrap">${rows.map(row => `<button type="button" class="species-chip" data-supporting-species="${esc(row.sp.name)}" aria-pressed="${row.sp.name === selected}">${esc(row.sp.name)} <b>${fmtPct(row.prob)}</b></button>`).join('') || '<span class="empty">None.</span>'}</div><p class="section-foot">Select a species to show more details above.</p>`;
   }
   function thresholdNote(view) {
-    return isAllBirds() ? 'Species ordered by probability (10% or more)'
-      : 'Species ordered by rarity points (0.1 or more)';
+    const measure = isAllBirds() ? 'a 10% probability' : '0.1 rarity points';
+    return `Darker cards have less than ${measure} ${view.month ? 'in the selected month' : 'across all months'}.`;
+  }
+  function setSupportingCard(detail, name) {
+    const id = detail.dataset.supportingSite;
+    const article = detail.closest('.day-report');
+    const grid = article.querySelector('.species-grid');
+    if (name) {
+      const site = sites.find(site => site.id === id), view = siteDisplayView(site);
+      const row = reportRows(site, view).supporting.find(row => row.sp.name === name);
+      if (!row) return;
+      grid.querySelector('[data-supporting-card]')?.remove();
+      supportingSelections.set(id, name);
+      grid.insertAdjacentHTML('beforeend', card({...row, supporting:true}, view.month, site));
+      restoreDisclosures(grid.lastElementChild);
+    } else {
+      grid.querySelector('[data-supporting-card]')?.remove();
+      supportingSelections.delete(id);
+    }
+    for (const chip of detail.querySelectorAll('[data-supporting-species]')) {
+      chip.setAttribute('aria-pressed', String(chip.dataset.supportingSpecies === supportingSelections.get(id)));
+    }
   }
   function columnCount(grid) {
     const columns = getComputedStyle(grid).gridTemplateColumns;
@@ -81,14 +106,19 @@ async function loadAllSpeciesScores() {
     const grid = article.querySelector('.species-grid');
     if (!site || !grid || !grid.clientWidth) return;
     records();
-    const key = batchKey(site.id), view = siteDisplayView(site), rows = mainRows(site,view,view.speciesView?.sp);
+    const key = batchKey(site.id), view = siteDisplayView(site), {main:rows} = reportRows(site,view);
     const target = Math.min(rows.length, Math.max(state.cardShown[key] || 0,
       (state.cardBatches[key] || INITIAL_ROWS) * columnCount(grid)));
-    const oldCount = grid.children.length;
-    if (target > oldCount) grid.insertAdjacentHTML('beforeend', rows.slice(oldCount,target).map(r => card(r,view.month,site)).join(''));
+    const supporting = grid.querySelector('[data-supporting-card]');
+    const oldCount = grid.children.length - Number(!!supporting);
+    if (target > oldCount) {
+      const html = rows.slice(oldCount,target).map(r => card(r,view.month,site)).join('');
+      if (supporting) supporting.insertAdjacentHTML('beforebegin', html);
+      else grid.insertAdjacentHTML('beforeend', html);
+    }
     state.cardShown[key] = target;
     // Restore only newly appended cards: resizing an open disclosure must not close it.
-    Array.from(grid.children).slice(oldCount).forEach(restoreDisclosures);
+    Array.from(grid.children).slice(oldCount,target).forEach(restoreDisclosures);
     const button = article.querySelector('[data-load-more]');
     button.hidden = target >= rows.length;
     if (clicked && button.hidden) grid.children[oldCount]?.querySelector('summary')?.focus({preventScroll:true});
@@ -100,6 +130,7 @@ async function loadAllSpeciesScores() {
       const key = batchKey(id);
       delete state.cardBatches[key];
       delete state.cardShown[key];
+      supportingSelections.delete(id);
     }
     return original.toggleSiteDetails(id);
   };
@@ -132,14 +163,23 @@ async function loadAllSpeciesScores() {
         toggleMoreSpeciesLabel(detail);
         if (detail.open && !detail.dataset.loaded) {
           const site = sites.find(s => s.id === detail.dataset.supportingSite);
-          detail.querySelector('.supporting-content').innerHTML = supportingContent(site);
+          const {supporting} = reportRows(site, siteDisplayView(site));
+          detail.querySelector('.supporting-content').innerHTML = supportingContent(site, supporting);
           detail.dataset.loaded = 'true';
         }
+        if (!detail.open && supportingSelections.has(detail.dataset.supportingSite)) setSupportingCard(detail);
       }
     }, true);
     els.reports.addEventListener('click', event => {
+      if (!day()) return;
+      const chip = event.target.closest('[data-supporting-species]');
+      if (chip) {
+        const detail = chip.closest('details[data-supporting-site]');
+        if (chip.getAttribute('aria-pressed') !== 'true') setSupportingCard(detail, chip.dataset.supportingSpecies);
+        return;
+      }
       const name = event.target.closest('[data-sticky-name]');
-      if (!day() || !name) return;
+      if (!name) return;
       const full = name.closest('.report-sticky').querySelector('.sticky-full-name');
       full.hidden = !full.hidden; name.setAttribute('aria-expanded',String(!full.hidden));
     });
@@ -148,6 +188,7 @@ async function loadAllSpeciesScores() {
     if (!day() || state.birdMode === choice) return;
     const drafts = {species:els.species.value,hotspot:els.hotspot.value};
     // A scoring change must not cancel a pending species/hotspot selection.
+    supportingSelections.clear();
     state.birdMode = choice;
     if (thresholdOn()) state.threshold = isAllBirds() ? '20' : '3.5';
     // Keep the user's map viewport; markers and scores still refresh.
@@ -200,9 +241,14 @@ async function loadAllSpeciesScores() {
   };
   card = function(row,month,site) {
     const html = original.card(row,month,site).replace(/\b(?:rare species )?score contribution/g,'rarity points').replace('<small>All months</small>','');
-    if (!isAllBirds()) return html;
+    const all = isAllBirds();
+    const belowThreshold = (all ? row.prob : row.contrib) < CARD_THRESHOLD;
+    if (!all && !belowThreshold && !row.supporting) return html;
     const template = document.createElement('template'); template.innerHTML = html;
     const article = template.content.firstElementChild;
+    if (belowThreshold) article.classList.add('species-card-below-threshold');
+    if (row.supporting) article.setAttribute('data-supporting-card', '');
+    if (!all) return article.outerHTML;
     const details = article.querySelector('details');
     article.classList.add('all-birds-card');
     article.querySelector('.detail-row')?.remove();
@@ -275,10 +321,12 @@ async function loadAllSpeciesScores() {
   siteHtml = function(site,rank) {
     records(); const view = siteDisplayView(site), open = !!state.siteDetails[site.id];
     if (!open) return `<article class="site-card day-report" data-report-id="${site.id}">${header(site,view,rank,false)}</article>`;
-    const rows = mainRows(site,view,view.speciesView?.sp), key = batchKey(site.id);
+    const {main:rows, supporting} = reportRows(site,view), key = batchKey(site.id);
     const count = Math.min(rows.length,state.cardShown[key] || INITIAL_ROWS);
     const moreOpen = state.reportDisclosures[`more:${site.id}`];
-    return `<article class="site-card site-card-open day-report day-report-open" data-report-id="${site.id}"><div class="report-sticky" aria-hidden="true">${identity(site,view,rank,{sticky:true})}<div class="sticky-full-name" hidden>${esc(site.name)}</div></div>${header(site,view,rank,true)}<div class="day-report-body"><section class="section">${site.flags?.length?`<div class="badges hotspot-warnings">${site.flags.map(f=>`<span class="badge badge-orange">${esc(f)}</span>`).join('')}</div>`:''}<p class="section-caption">${thresholdNote(view)}</p><div class="species-grid">${rows.slice(0,count).map(row=>card(row,view.month,site)).join('')}</div><button class="btn show-more-species" type="button" data-load-more onclick="showMoreBirds('${site.id}')" ${count>=rows.length?'hidden':''}>Show more ↓</button><span class="load-status" role="status" aria-live="polite"></span></section></div><section class="section supporting-section"><details class="supporting" data-supporting-site="${site.id}" ${moreOpen?'open data-loaded="true"':''}><summary><span class="more-species-label">More species - ${moreOpen?'hide':'show'}</span></summary><div class="supporting-content">${moreOpen?supportingContent(site):''}</div></details></section></article>`;
+    const selected = moreOpen && supporting.find(row => row.sp.name === supportingSelections.get(site.id));
+    const preview = selected ? card({...selected, supporting:true}, view.month, site) : '';
+    return `<article class="site-card site-card-open day-report day-report-open" data-report-id="${site.id}"><div class="report-sticky" aria-hidden="true">${identity(site,view,rank,{sticky:true})}<div class="sticky-full-name" hidden>${esc(site.name)}</div></div>${header(site,view,rank,true)}<div class="day-report-body"><section class="section">${site.flags?.length?`<div class="badges hotspot-warnings">${site.flags.map(f=>`<span class="badge badge-orange">${esc(f)}</span>`).join('')}</div>`:''}<div class="species-grid">${rows.slice(0,count).map(row=>card(row,view.month,site)).join('')}${preview}</div><p class="section-caption">${thresholdNote(view)}</p><button class="btn show-more-species" type="button" data-load-more onclick="showMoreBirds('${site.id}')" ${count>=rows.length?'hidden':''}>Show more ↓</button><span class="load-status" role="status" aria-live="polite"></span></section></div><section class="section supporting-section"><details class="supporting" data-supporting-site="${site.id}" ${moreOpen?'open data-loaded="true"':''}><summary><span class="more-species-label">More species - ${moreOpen?'hide':'show'}</span></summary><div class="supporting-content">${moreOpen?supportingContent(site,supporting):''}</div></details></section></article>`;
   };
 
   let gridObserver, headerObserver;
