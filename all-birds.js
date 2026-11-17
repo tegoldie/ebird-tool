@@ -69,7 +69,7 @@ async function loadAllSpeciesScores() {
   }
   function thresholdNote(view) {
     const measure = isAllBirds() ? 'a 10% probability' : '0.1 rarity points';
-    return `Darker cards have less than ${measure} ${view.month ? 'in the selected month' : 'across all months'}.`;
+    return `Darker cards have less than ${measure} in the selected month`;
   }
   function setSupportingCard(detail, name) {
     const id = detail.dataset.supportingSite;
