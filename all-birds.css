@@ -98,8 +98,8 @@ body[data-mode="night"] .main-filter-grid.night-filter-grid{grid-template-column
 .day-report .header-monthly-profile .header-month-column{min-width:0}
 .day-report .unified-card .species-months.has-all-months{position:relative;grid-template-columns:repeat(12,minmax(0,1fr)) 20px;--month-track-height:26px}
 .day-report .all-months-column{padding-left:6px}
-.day-report .all-months-column :is(.species-month-fill,.header-month-fill){background-color:#dce9f1;background-image:radial-gradient(circle,#426e8b .7px,transparent .85px);background-size:3px 3px}
-.day-report .all-months-column.active :is(.species-month-fill,.header-month-fill){background-color:#102c50;background-image:radial-gradient(circle,#cbdde9 .7px,transparent .85px)}
+.day-report .all-months-column :is(.species-month-fill,.header-month-fill){background-color:#dce9f1;background-image:repeating-linear-gradient(135deg,transparent 0 2px,#426e8ba6 2px 3px,transparent 3px 5px)}
+.day-report .all-months-column.active :is(.species-month-fill,.header-month-fill){background-color:#102c50;background-image:repeating-linear-gradient(135deg,transparent 0 2px,#dce9f1a6 2px 3px,transparent 3px 5px)}
 .day-report .all-months-reference{position:absolute;top:calc(var(--month-track-height) * (1 - var(--all-ratio)));left:0;right:0;border-top:1px dotted #426e8b;z-index:2;pointer-events:none}
 .day-report .header-month-column.all-months-column .header-month-letter{white-space:nowrap}
 .day-report .report-collapse-arrow{flex:none;align-self:flex-start;width:20px;min-height:24px;padding:0;border:0;background:transparent;color:var(--muted);font:600 19px/1.25 "Segoe UI",Arial,sans-serif;cursor:pointer}
@@ -117,8 +117,8 @@ body[data-mode="night"] .main-filter-grid.night-filter-grid{grid-template-column
 .day-report .unified-card .species-month-fill,.day-report .header-monthly-profile .header-month-fill{background:#6ca3c2}
 .day-report .unified-card .species-month.active .species-month-fill,.day-report .header-monthly-profile .header-month-column.active .header-month-fill{background:#102c50}
 .day-report .unified-card .species-month.active,.day-report .header-monthly-profile .header-month-column.active .header-month-letter{color:#102c50}
-.day-report .all-months-column :is(.species-month-fill,.header-month-fill),.day-report .unified-card .all-months-column .species-month-fill,.day-report .header-monthly-profile .all-months-column .header-month-fill{background:#dce9f1 radial-gradient(circle at 1px 1px,#426e8b .65px,transparent .85px) 0 0/4px 4px repeat}
-.day-report .all-months-column.active :is(.species-month-fill,.header-month-fill),.day-report .unified-card .species-month.all-months-column.active .species-month-fill,.day-report .header-monthly-profile .header-month-column.all-months-column.active .header-month-fill{background:#102c50 radial-gradient(circle at 1px 1px,#dce9f1 .65px,transparent .85px) 0 0/4px 4px repeat}
+.day-report .all-months-column :is(.species-month-fill,.header-month-fill),.day-report .unified-card .all-months-column .species-month-fill,.day-report .header-monthly-profile .all-months-column .header-month-fill{background:#dce9f1 repeating-linear-gradient(135deg,transparent 0 2px,#426e8ba6 2px 3px,transparent 3px 5px)}
+.day-report .all-months-column.active :is(.species-month-fill,.header-month-fill),.day-report .unified-card .species-month.all-months-column.active .species-month-fill,.day-report .header-monthly-profile .header-month-column.all-months-column.active .header-month-fill{background:#102c50 repeating-linear-gradient(135deg,transparent 0 2px,#dce9f1a6 2px 3px,transparent 3px 5px)}
 .day-report .all-months-reference{border-color:#426e8b}
 
 .bird-mode-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0 12px}
