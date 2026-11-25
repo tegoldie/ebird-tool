@@ -148,21 +148,30 @@ async function loadAllSpeciesScores() {
   let chooseControls = [];
   function buildChooseControl(block,input,label){
     const group=document.createElement('div');
+    group.className='choose-control';
     const button=document.createElement('button');
     button.type='button';
+    button.className='choose-trigger';
     button.setAttribute('aria-expanded','false');
     button.setAttribute('aria-controls',block.id='choose-'+input.id);
     button.innerHTML=searchIcon+'<span>'+label+'</span><svg class="chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>';
     input.insertAdjacentHTML('beforebegin',searchIcon);
+    const suggestions=block.querySelector('.suggestions');
+    const actions=block.querySelector('.filter-actions');
     block.hidden=true;
     const setOpen=open=>{
       block.hidden=!open;
       button.setAttribute('aria-expanded',String(open));
+      if(!open)suggestions.classList.add('hidden');
     };
     button.addEventListener('click',()=>{
       const opening=block.hidden;
       for(const control of chooseControls)control.setOpen(false);
-      if(opening){setOpen(true);input.focus()}
+      if(opening){
+        setOpen(true);
+        input.value='';
+        input.focus();
+      }
     });
     block.addEventListener('keydown',event=>{
       if(event.key!=='Escape')return;
@@ -170,8 +179,8 @@ async function loadAllSpeciesScores() {
       setOpen(false);
       button.focus();
     });
-    group.append(button,block);
-    return {group,button,setOpen,label,selection:''};
+    group.append(button,block,actions);
+    return {group,block,button,setOpen,label,selection:''};
   }
 
   initControls = function() {
@@ -254,9 +263,9 @@ async function loadAllSpeciesScores() {
       if(control.selection===selection)continue;
       control.selection=selection;
       control.button.querySelector('span').textContent=selection ? control.label+' · '+selection : control.label;
-      if(selection){
-        for(const other of chooseControls)other.setOpen(other===control);
-      }
+      const restoreFocus=control.block.contains(document.activeElement);
+      control.setOpen(false);
+      if(restoreFocus)control.button.focus();
     }
     document.body.dataset.birds = isAllBirds() ? 'all' : 'rare';
     bestMonthNote.hidden=!day() || state.sort!=='peak';

@@ -144,9 +144,9 @@ body[data-mode=night] .bird-mode-magpie{filter:invert(1)}
 .main-filter-grid .control label{font:600 1rem/1.45 "Segoe UI",Arial,Helvetica,sans-serif;text-transform:none;letter-spacing:normal;color:var(--ink)}
 .choose-toolbar svg{width:17px;height:17px;flex:none}
 .choose-toolbar > svg{width:0;height:0}
-.choose-toolbar button{display:flex;align-items:center;gap:9px;padding:8px 12px;text-align:left;font-weight:600;cursor:pointer}
-.choose-toolbar :is(button,input){width:100%;min-height:42px;border:1px solid #ccd7df;border-radius:7px;background:var(--panel);color:var(--ink)}
-.choose-toolbar button:is(:hover,[aria-expanded=true]){background:#eef5ff;border-color:#a9c7ef}
+.choose-toolbar .choose-trigger{display:flex;align-items:center;gap:9px;padding:8px 12px;text-align:left;font-weight:600;cursor:pointer}
+.choose-toolbar :is(.choose-trigger,input){width:100%;min-height:42px;border:1px solid #ccd7df;border-radius:7px;background:var(--panel);color:var(--ink)}
+.choose-toolbar .choose-trigger:is(:hover,[aria-expanded=true]){background:#eef5ff;border-color:#a9c7ef}
 .choose-toolbar :is(button,input):focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .choose-toolbar .chevron{margin-left:auto;color:var(--muted);width:14px}
 .choose-toolbar button[aria-expanded=true] .chevron{transform:rotate(180deg)}
@@ -154,8 +154,10 @@ body[data-mode=night] .bird-mode-magpie{filter:invert(1)}
 .choose-toolbar .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
 .choose-toolbar input{padding:8px 12px 8px 36px}
 .choose-toolbar input::placeholder{color:var(--muted)}
-body[data-mode=night] .choose-toolbar :is(button,input){border-color:var(--line)}
-body[data-mode=night] .choose-toolbar button:is(:hover,[aria-expanded=true]){background:var(--panel);border-color:var(--ink)}
+body[data-mode=night] .choose-toolbar :is(.choose-trigger,input){border-color:var(--line)}
+body[data-mode=night] .choose-toolbar .choose-trigger:is(:hover,[aria-expanded=true]){background:var(--panel);border-color:var(--ink)}
+body[data-mode=night] .choose-toolbar .clear-hotspot-btn{background:var(--green);border-color:var(--green);color:#fff}
+body[data-mode=night] .choose-toolbar .clear-hotspot-btn:hover{background:#1b633c;border-color:#1b633c}
 body[data-mode=night] .choose-toolbar :is(button,input):focus-visible{outline-color:var(--ink)}
 [data-disclosure] .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .disclosure-prompt{flex:none;margin-left:auto;color:var(--muted);font-size:.78rem;font-weight:400}
@@ -191,6 +193,8 @@ body[data-mode=night] .control input::placeholder{color:var(--ink);opacity:1}
 .choose-toolbar .filter-block:not([hidden]){display:block}
 .choose-toolbar [hidden],.bird-mode-description [hidden]{display:none!important}
 .choose-toolbar .filter-block{margin-top:8px}
+.choose-toolbar .filter-actions:has(> :not(.hidden)){margin-top:8px}
+.choose-toolbar .filter-actions{margin-top:0}
 .choose-toolbar .filter-block .control label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .choose-toolbar .filter-block .control>svg{position:absolute;left:12px;top:12px;width:17px;height:17px;color:var(--muted);pointer-events:none}
 .choose-toolbar .filter-block input{padding-left:36px}
