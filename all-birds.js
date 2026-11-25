@@ -145,58 +145,44 @@ async function loadAllSpeciesScores() {
   };
 
   const searchIcon = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4 4"/></svg>';
-  let chooseControls = [];
-  function buildChooseControl(block,input,label){
-    const group=document.createElement('div');
-    group.className='choose-control';
-    const button=document.createElement('button');
-    button.type='button';
-    button.className='choose-trigger';
-    button.setAttribute('aria-expanded','false');
-    button.setAttribute('aria-controls',block.id='choose-'+input.id);
-    button.innerHTML=searchIcon+'<span>'+label+'</span><svg class="chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>';
+  function prepareChooseField(input,selection){
+    const block=input.closest('.filter-block');
+    const control=input.closest('.suggest-wrap');
+    block.classList.add('choose-control');
     input.insertAdjacentHTML('beforebegin',searchIcon);
     const suggestions=block.querySelector('.suggestions');
-    const actions=block.querySelector('.filter-actions');
-    block.hidden=true;
-    const setOpen=open=>{
-      block.hidden=!open;
-      button.setAttribute('aria-expanded',String(open));
-      if(!open)suggestions.classList.add('hidden');
+    const restoreSelection=()=>{
+      input.value=selection();
+      suggestions.classList.add('hidden');
     };
-    button.addEventListener('click',()=>{
-      const opening=block.hidden;
-      for(const control of chooseControls)control.setOpen(false);
-      if(opening){
-        setOpen(true);
-        input.value='';
-        input.focus();
-      }
+    const selectCurrentValue=()=>{
+      if(input.value && input.value===selection())input.select();
+    };
+    input.addEventListener('focus',selectCurrentValue);
+    input.addEventListener('click',selectCurrentValue);
+    control.addEventListener('focusout',event=>{
+      if(!control.contains(event.relatedTarget))restoreSelection();
     });
-    block.addEventListener('keydown',event=>{
+    control.addEventListener('keydown',event=>{
       if(event.key!=='Escape')return;
       event.preventDefault();
-      setOpen(false);
-      button.focus();
+      input.focus();
+      restoreSelection();
+      selectCurrentValue();
     });
-    group.append(button,block,actions);
-    return {group,block,button,setOpen,label,selection:''};
+    return block;
   }
 
   initControls = function() {
     original.initControls();
     records(); state.birdMode ||= 'rare';
     const grid = qs('.filter-grid');
-    const speciesBlock = els.species.closest('.filter-block');
-    const hotspotBlock = els.hotspot.closest('.filter-block');
+    const speciesBlock = prepareChooseField(els.species,()=>state.species);
+    const hotspotBlock = prepareChooseField(els.hotspot,()=>state.hotspot);
     const choose = document.createElement('section');
     choose.className = 'toolbar choose-toolbar';
     const chooseGrid = document.createElement('div'); chooseGrid.className = 'choose-grid';
-    chooseControls=[
-      buildChooseControl(speciesBlock,els.species,'Choose species'),
-      buildChooseControl(hotspotBlock,els.hotspot,'Choose hotspot')
-    ];
-    chooseGrid.append(...chooseControls.map(control=>control.group)); choose.append(chooseGrid);
+    chooseGrid.append(speciesBlock,hotspotBlock); choose.append(chooseGrid);
     grid.closest('.toolbar').after(choose);
     grid.classList.add('main-filter-grid');
     bestMonthNote=document.createElement('p');bestMonthNote.id='bestMonthNote';bestMonthNote.className='best-month-note';bestMonthNote.hidden=true;
@@ -258,15 +244,6 @@ async function loadAllSpeciesScores() {
   syncControls = function() {
     original.syncControls();
     if (!bestMonthNote) return;
-    for(const [index,selection] of [state.species,state.hotspot].entries()){
-      const control=chooseControls[index];
-      if(control.selection===selection)continue;
-      control.selection=selection;
-      control.button.querySelector('span').textContent=selection ? control.label+' · '+selection : control.label;
-      const restoreFocus=control.block.contains(document.activeElement);
-      control.setOpen(false);
-      if(restoreFocus)control.button.focus();
-    }
     document.body.dataset.birds = isAllBirds() ? 'all' : 'rare';
     bestMonthNote.hidden=!day() || state.sort!=='peak';
     bestMonthNote.textContent=state.species ? 'Each hotspot is shown in its best month for this species' : 'Each hotspot is shown in its own best month';

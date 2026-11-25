@@ -180,7 +180,6 @@
   applyHashState=function(){const p=new URLSearchParams(location.hash.slice(1));if(p.get('mode')==='night'){pendingHash=p;state.hashReady=true}else original.applyHashState()};
   syncControls=function(){
     original.syncControls();syncModeButtons();
-    els.species.placeholder=active()?'Choose a nocturnal species or type any species':'Start typing a species';
     els.sort.closest('.filter-block').classList.toggle('hidden',active());
     els.threshold.closest('.best-hotspots-row').classList.toggle('hidden',active());
     qs('.filter-grid').classList.toggle('night-filter-grid',active());
