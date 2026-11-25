@@ -102,7 +102,7 @@
         window.scrollTo(0,view.scroll||0);
       }));
     }catch(error){
-      console.error('Night mode could not be loaded',error);
+      console.error('Night Mode could not be loaded',error);
       message.textContent='Night records could not be loaded. Use the mode button to try again.';
       message.classList.remove('hidden');
       if(!active()&&!els.reports.querySelector('.site-card')){
@@ -111,7 +111,7 @@
       }
     }finally{if(token===change){busy=false;syncModeButtons()}}
   }
-  const modeLabels={all:'All Birds Mode',rare:'Rare Birds Mode',night:'Night Birds Mode'};
+  const modeLabels={all:'All Birds Mode',rare:'Rare Birds Mode',night:'Night Mode'};
   function syncModeButtons(){
     if(!modePanel)return;
     const selected=active()?'night':state.birdMode||'rare';
