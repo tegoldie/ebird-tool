@@ -67,9 +67,9 @@ async function loadAllSpeciesScores() {
     const selected = supportingSelections.get(site.id);
     return `<div class="chip-wrap">${rows.map(row => `<button type="button" class="species-chip" data-supporting-species="${esc(row.sp.name)}" aria-pressed="${row.sp.name === selected}">${esc(row.sp.name)} <b>${fmtPct(row.prob)}</b></button>`).join('') || '<span class="empty">None.</span>'}</div><p class="section-foot">Select a species to show more details above.</p>`;
   }
-  function thresholdNote(view) {
-    const measure = isAllBirds() ? 'a 10% probability' : '0.1 rarity points';
-    return `Darker cards have less than ${measure} in the selected month`;
+  function thresholdNote() {
+    return isAllBirds() ? 'Species ordered by probability (10% or more)'
+      : 'Species ordered by rarity points (0.1 or more)';
   }
   function setSupportingCard(detail, name) {
     const id = detail.dataset.supportingSite;
@@ -326,7 +326,7 @@ async function loadAllSpeciesScores() {
     const moreOpen = state.reportDisclosures[`more:${site.id}`];
     const selected = moreOpen && supporting.find(row => row.sp.name === supportingSelections.get(site.id));
     const preview = selected ? card({...selected, supporting:true}, view.month, site) : '';
-    return `<article class="site-card site-card-open day-report day-report-open" data-report-id="${site.id}"><div class="report-sticky" aria-hidden="true">${identity(site,view,rank,{sticky:true})}<div class="sticky-full-name" hidden>${esc(site.name)}</div></div>${header(site,view,rank,true)}<div class="day-report-body"><section class="section">${site.flags?.length?`<div class="badges hotspot-warnings">${site.flags.map(f=>`<span class="badge badge-orange">${esc(f)}</span>`).join('')}</div>`:''}<div class="species-grid">${rows.slice(0,count).map(row=>card(row,view.month,site)).join('')}${preview}</div><p class="section-caption">${thresholdNote(view)}</p><button class="btn show-more-species" type="button" data-load-more onclick="showMoreBirds('${site.id}')" ${count>=rows.length?'hidden':''}>Show more ↓</button><span class="load-status" role="status" aria-live="polite"></span></section></div><section class="section supporting-section"><details class="supporting" data-supporting-site="${site.id}" ${moreOpen?'open data-loaded="true"':''}><summary><span class="more-species-label">More species - ${moreOpen?'hide':'show'}</span></summary><div class="supporting-content">${moreOpen?supportingContent(site,supporting):''}</div></details></section></article>`;
+    return `<article class="site-card site-card-open day-report day-report-open" data-report-id="${site.id}"><div class="report-sticky" aria-hidden="true">${identity(site,view,rank,{sticky:true})}<div class="sticky-full-name" hidden>${esc(site.name)}</div></div>${header(site,view,rank,true)}<div class="day-report-body"><section class="section">${site.flags?.length?`<div class="badges hotspot-warnings">${site.flags.map(f=>`<span class="badge badge-orange">${esc(f)}</span>`).join('')}</div>`:''}<p class="section-caption">${thresholdNote()}</p><div class="species-grid">${rows.slice(0,count).map(row=>card(row,view.month,site)).join('')}${preview}</div><button class="btn show-more-species" type="button" data-load-more onclick="showMoreBirds('${site.id}')" ${count>=rows.length?'hidden':''}>Show more ↓</button><span class="load-status" role="status" aria-live="polite"></span></section></div><section class="section supporting-section"><details class="supporting" data-supporting-site="${site.id}" ${moreOpen?'open data-loaded="true"':''}><summary><span class="more-species-label">More species - ${moreOpen?'hide':'show'}</span></summary><div class="supporting-content">${moreOpen?supportingContent(site,supporting):''}</div></details></section></article>`;
   };
 
   let gridObserver, headerObserver;

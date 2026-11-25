@@ -106,7 +106,7 @@ body[data-mode="night"] .main-filter-grid.night-filter-grid{grid-template-column
 
 
 /* Day-list captions and context directly beneath the Month control. */
-.day-report .section-caption{margin:10px 0;color:var(--muted);font-size:.78rem;line-height:1.45}
+.day-report .section-caption{margin:0 0 8px;color:var(--muted);font-size:.78rem;line-height:1.45}
 .day-report .species-card-below-threshold{background:#dde5ea}
 .day-report .species-card-below-threshold .interval-rail{background:#c3cfd8}
 .day-report button.species-chip{border:1px solid transparent;font-family:inherit;cursor:pointer}
