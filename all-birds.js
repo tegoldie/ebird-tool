@@ -2,7 +2,7 @@
 'use strict';
 const allSpeciesScores = new Map();
 function isAllBirds() { return document.body.dataset.mode !== 'night' && state.birdMode === 'all'; }
-function speciesScoreName() { return isAllBirds() ? 'All species score' : 'Rare species score'; }
+function speciesScoreName() { return isAllBirds() ? 'Expected species' : 'Total rarity points'; }
 function siteScore(site) { return isAllBirds() ? allSpeciesScores.get(site.id)[0] : site.score; }
 function siteScoreMonths(site) { return isAllBirds() ? allSpeciesScores.get(site.id).slice(1) : site.monthly; }
 function scoreQualifies(value) { return isAllBirds() ? value > 20 : value >= 3.5; }
