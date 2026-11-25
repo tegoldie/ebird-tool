@@ -180,7 +180,7 @@
     els.sort.closest('.filter-block').classList.toggle('hidden',active());
     els.threshold.closest('.best-hotspots-row').classList.toggle('hidden',active());
     qs('.filter-grid').classList.toggle('night-filter-grid',active());
-    ordering?.classList.toggle('hidden',!active());
+    ordering?.classList.toggle('hidden',!active() || !state.species);
     if(active()){els.monthControl.classList.add('hidden');els.resetSiteViews.classList.add('hidden')}
   };
   renderSpeciesSuggestions=function(){
@@ -270,9 +270,8 @@
     if(pendingHash){const p=pendingHash;pendingHash=null;els.reports.innerHTML='<p class="empty" role="status">Loading night records…</p>';setMode('night',{hash:p});return}
     if(!active()){original.render();return}
     syncControls();const rows=filteredSites();
-    const n=rows.reduce((sum,s)=>sum+(state.species?reporting(s)?.checklists||0:s.lists),0);
-    els.summary.textContent=`${number(rows.length)} hotspot${rows.length===1?'':'s'} shown · ${number(n)} night checklists${state.species?' reporting '+state.species:''}`;
-    ordering.textContent=state.species?`Ordered by number of night checklists reporting ${state.species}`:'Ordered by number of nocturnal species recorded';
+    els.summary.textContent=`${number(rows.length)} hotspot${rows.length===1?'':'s'} shown`;
+    ordering.textContent=state.species?`Ordered by number of night checklists reporting ${state.species}`:'';
     els.reports.innerHTML=rows.map(siteHtml).join('')||'<p class="empty">No matching night records.</p>';
     renderMap(state.hotspot?hotspotMapSites():rows);renderSpeciesSuggestions();renderHotspotSuggestions();writeNightHash();
   };
