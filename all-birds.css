@@ -129,10 +129,6 @@ body[data-mode=night] .bird-mode-buttons button[aria-pressed=true]{background:#f
 .bird-mode-magpie{object-fit:contain}
 body[data-mode=night] .bird-mode-magpie{filter:invert(1)}
 .bird-mode-moon{font:29px/25px "Segoe UI Symbol",sans-serif}
-.bird-mode-binoculars{position:relative;background:linear-gradient(currentColor,currentColor) center 12px/8px 2px no-repeat}
-.bird-mode-binoculars::before,.bird-mode-binoculars::after{content:"";position:absolute;box-sizing:border-box;top:4px;width:10px;height:17px;border:2px solid currentColor;border-radius:4px 4px 5px 5px;background:linear-gradient(currentColor,currentColor) center 8px/100% 2px no-repeat}
-.bird-mode-binoculars::before{left:2px;transform:rotate(12deg)}
-.bird-mode-binoculars::after{right:2px;transform:rotate(-12deg)}
 .bird-mode-description{margin:0 0 16px;padding:12px 14px;background:var(--panel);color:var(--muted);border:1px solid var(--line);border-radius:8px;font-size:14px}
 @media(max-width:700px){
   .bird-mode-buttons{gap:6px;margin-top:16px}

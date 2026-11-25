@@ -134,7 +134,11 @@
     modePanel.className='bird-mode-panel';
     const icons={
       all:'<img class="bird-mode-magpie" src="images/magpie-mode.png" alt="">',
-      rare:'<span class="bird-mode-binoculars" aria-hidden="true"></span>',
+      rare:`<svg class="bird-mode-binoculars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M2 14.5 4.5 6.7A2.5 2.5 0 0 1 6.9 5h.6A2.5 2.5 0 0 1 10 7.5V16m12-1.5-2.5-7.8A2.5 2.5 0 0 0 17.1 5h-.6A2.5 2.5 0 0 0 14 7.5V16M10 9h4m-4 4h4"/>
+        <circle cx="6" cy="16" r="4"/>
+        <circle cx="18" cy="16" r="4"/>
+      </svg>`,
       night:'<span class="bird-mode-moon" aria-hidden="true">☾</span>'
     };
     const buttons=document.createElement('div');
