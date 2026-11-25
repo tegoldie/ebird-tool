@@ -144,6 +144,36 @@ async function loadAllSpeciesScores() {
     fillGrid(els.reports.querySelector(`[data-report-id="${CSS.escape(id)}"]`), {clicked:true});
   };
 
+  const searchIcon = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4 4"/></svg>';
+  let chooseControls = [];
+  function buildChooseControl(block,input,label){
+    const group=document.createElement('div');
+    const button=document.createElement('button');
+    button.type='button';
+    button.setAttribute('aria-expanded','false');
+    button.setAttribute('aria-controls',block.id='choose-'+input.id);
+    button.innerHTML=searchIcon+'<span>'+label+'</span><svg class="chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>';
+    input.insertAdjacentHTML('beforebegin',searchIcon);
+    block.hidden=true;
+    const setOpen=open=>{
+      block.hidden=!open;
+      button.setAttribute('aria-expanded',String(open));
+    };
+    button.addEventListener('click',()=>{
+      const opening=block.hidden;
+      for(const control of chooseControls)control.setOpen(false);
+      if(opening){setOpen(true);input.focus()}
+    });
+    block.addEventListener('keydown',event=>{
+      if(event.key!=='Escape')return;
+      event.preventDefault();
+      setOpen(false);
+      button.focus();
+    });
+    group.append(button,block);
+    return {group,button,setOpen,label,selection:''};
+  }
+
   initControls = function() {
     original.initControls();
     records(); state.birdMode ||= 'rare';
@@ -153,7 +183,11 @@ async function loadAllSpeciesScores() {
     const choose = document.createElement('section');
     choose.className = 'toolbar choose-toolbar';
     const chooseGrid = document.createElement('div'); chooseGrid.className = 'choose-grid';
-    chooseGrid.append(speciesBlock, hotspotBlock); choose.append(chooseGrid);
+    chooseControls=[
+      buildChooseControl(speciesBlock,els.species,'Choose species'),
+      buildChooseControl(hotspotBlock,els.hotspot,'Choose hotspot')
+    ];
+    chooseGrid.append(...chooseControls.map(control=>control.group)); choose.append(chooseGrid);
     grid.closest('.toolbar').after(choose);
     grid.classList.add('main-filter-grid');
     bestMonthNote=document.createElement('p');bestMonthNote.id='bestMonthNote';bestMonthNote.className='best-month-note';bestMonthNote.hidden=true;
@@ -215,6 +249,15 @@ async function loadAllSpeciesScores() {
   syncControls = function() {
     original.syncControls();
     if (!bestMonthNote) return;
+    for(const [index,selection] of [state.species,state.hotspot].entries()){
+      const control=chooseControls[index];
+      if(control.selection===selection)continue;
+      control.selection=selection;
+      control.button.querySelector('span').textContent=selection ? control.label+' · '+selection : control.label;
+      if(selection){
+        for(const other of chooseControls)other.setOpen(other===control);
+      }
+    }
     document.body.dataset.birds = isAllBirds() ? 'all' : 'rare';
     bestMonthNote.hidden=!day() || state.sort!=='peak';
     bestMonthNote.textContent=state.species ? 'Each hotspot is shown in its best month for this species' : 'Each hotspot is shown in its own best month';

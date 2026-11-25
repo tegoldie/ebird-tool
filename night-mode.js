@@ -121,8 +121,7 @@
     }
     modePanel.setAttribute('aria-busy',String(busy));
     const description=modePanel.querySelector('.bird-mode-description');
-    const text='Placeholder text explaining '+modeLabels[selected]+' will appear here.';
-    if(description.textContent!==text)description.textContent=text;
+    for(const panel of description.children)panel.hidden=panel.dataset.modeCopy!==selected;
   }
 
   initControls=function(){
@@ -158,9 +157,14 @@
       });
       buttons.append(button);
     }
-    const description=document.createElement('p');
+    const description=document.createElement('div');
     description.className='bird-mode-description';
-    description.setAttribute('role','status');
+    for(const mode of Object.keys(modeLabels)){
+      const panel=document.createElement('div');
+      panel.dataset.modeCopy=mode;
+      panel.append(document.getElementById('mode-copy-'+mode).content.cloneNode(true));
+      description.append(panel);
+    }
     modePanel.append(buttons,description);
     els.technicalInfoCard.after(modePanel);
     message=document.createElement('p');message.className='night-load-message hidden';message.setAttribute('role','status');modePanel.after(message);
